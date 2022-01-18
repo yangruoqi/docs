@@ -9,33 +9,99 @@ MindSpore教程
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: 入门教程
+   :caption: 初级
    :hidden:
 
-   introduction
-   quick_start
-   tensor
-   dataset
-   model
-   autograd
-   optimization
-   save_load_model
-   inference
-   linear_regression
+   beginner/introduction
+   beginner/quick_start
+   beginner/tensor
+   beginner/dataset
+   beginner/model
+   beginner/autograd
+   beginner/mode_train
+   beginner/save_load_model
+   beginner/basic_process_deep_learning
 
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: 进阶教程
+   :caption: 进阶
    :hidden:
 
-   intermediate/mid_low_level_api
-   intermediate/data
-   image_and_video
-   text
-   intermediate/pynative_mode_and_graph_mode
-   distributed_training
-   inference_and_deploy
+   dataset
+   build_net
+   pynative_mode_and_graph_mode
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 计算机视觉
+   :hidden:
+
+   cv/test
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 自然语言处理
+   :hidden:
+
+   NLP/test
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 数据引擎
+   :hidden:
+
+   data_engine/eager
+   data_engine/auto_augmentation
+   data_engine/cache
+   data_engine/optimize_data_processing
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 编译优化
+   :hidden:
+
+   compiler_optimization/enable_graph_kernel_fusion
+   compiler_optimization/jit_fallback
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 模型推理
+   :hidden:
+
+   model_infer/multi_platform_inference
+   model_infer/online_inference
+   offline_inference
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 分布式并行
+   :hidden:
+
+   distributed_parallel/test
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 调试调优
+   :hidden:
+
+   debugging_tuning/test
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 其他特性
+   :hidden:
+
+   other_feature/test
+
 
 .. raw:: html
 
