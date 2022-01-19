@@ -4,4 +4,4 @@
 .. toctree::
    :maxdepth: 1
 
-   intermediate/pynative_mode_and_graph_mode/test
+   pynative_mode_and_graph_mode/test
