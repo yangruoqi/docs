@@ -4,4 +4,4 @@
 .. toctree::
    :maxdepth: 1
 
-   intermediate/dataset/test
+   dataset/test

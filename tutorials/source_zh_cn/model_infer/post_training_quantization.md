@@ -1,8 +1,8 @@
-# 应用训练后量化
+# 训练后量化
 
 `端侧` `Ascend` `推理应用`
 
-<a href="https://gitee.com/mindspore/docs/blob/master/docs/mindspore/programming_guide/source_zh_cn/apply_post_training_quantization.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/master/tutorials/source_zh_cn/model_infer/post_training_quantization.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 ## 概念
 

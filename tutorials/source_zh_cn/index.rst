@@ -18,7 +18,7 @@ MindSpore教程
    beginner/dataset
    beginner/model
    beginner/autograd
-   beginner/mode_train
+   beginner/model_train
    beginner/save_load_model
    beginner/basic_process_deep_learning
 
@@ -28,9 +28,9 @@ MindSpore教程
    :caption: 进阶
    :hidden:
 
-   dataset
-   build_net
-   pynative_mode_and_graph_mode
+   intermediate/dataset
+   intermediate/build_net
+   intermediate/pynative_mode_and_graph_mode
 
 .. toctree::
    :glob:
@@ -46,7 +46,7 @@ MindSpore教程
    :caption: 自然语言处理
    :hidden:
 
-   NLP/test
+   nlp/test
 
 .. toctree::
    :glob:
@@ -74,9 +74,9 @@ MindSpore教程
    :caption: 模型推理
    :hidden:
 
-   model_infer/multi_platform_inference
+   model_infer/inference
    model_infer/online_inference
-   offline_inference
+   model_infer/offline_inference
 
 .. toctree::
    :glob:

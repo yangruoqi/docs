@@ -2,6 +2,8 @@
 
 `Ascend` `GPU` `CPU` `模型运行`
 
+<a href="https://gitee.com/mindspore/docs/blob/master/tutorials/source_zh_cn/compiler_optimization/jit_fallback.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+
 ## 概述
 
 MindSpore框架支持静态图模式和动态图模式两种方式。在静态图模式下，先将Python代码编译成静态计算图，然后执行静态计算图。由于语法解析的限制，用户编写程序时需要遵循MindSpore[静态图语法支持](https://www.mindspore.cn/docs/note/zh-CN/master/static_graph_syntax_support.html)，语法使用存在约束限制。在动态图模式下，Python代码会通过Python解释器执行，用户可以使用任意Python语法。可以看到，静态图和动态图的编译流程不一致，语法约束限制也不同。关于静态图和动态图的更多介绍，请参考[静态图和动态图](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/design/dynamic_graph_and_static_graph.html)。
@@ -141,7 +143,7 @@ JIT Fallback借鉴了传统JIT编译的Fallback的思路。传统的JIT编译经
 
 下图是JIT Fallback的整体处理流程。
 
-![JIT Fallback](./design/images/fallback.png)
+![JIT Fallback](./images/fallback.png)
 
 首先，用户编写程序代码后，`Cell.construct()`或者`@ms_function`函数作为编译输入。然后，MindCompiler在编译阶段检测不支持的语法，并且根据不支持的语法表达式生成解释节点。最后，在编译时（Compiler Time）阶段或运行时（Runtime）阶段，推导和执行解释节点。对于常量场景，可以在类型推导阶段完成常量的推导，并通过Python解释器进行执行。注意：运行时(Runtime)阶段的JIT Fallback暂不支持。
 
