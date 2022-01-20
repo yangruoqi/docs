@@ -114,7 +114,9 @@ MindSpore教程
 
    other_feature/second_order_optimizer
    other_feature/apply_quantization_aware_training
+   other_feature/enable_mixed_precision
    other_feature/apply_gradient_accumulation
+   other_feature/apply_host_device_training
    other_feature/numpy
    other_feature/custom_operator
 
