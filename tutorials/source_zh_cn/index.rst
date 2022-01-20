@@ -28,7 +28,7 @@ MindSpore教程
    :caption: 进阶
    :hidden:
 
-   intermediate/dataset
+   intermediate/dataset_load_process
    intermediate/build_net
    intermediate/pynative_mode_and_graph_mode
 
@@ -38,7 +38,10 @@ MindSpore教程
    :caption: 计算机视觉
    :hidden:
 
-   cv/test
+   cv/cv_resnet50
+   cv/transfer_learning
+   cv/adversarial_example_generation
+   cv/dcgan
 
 .. toctree::
    :glob:
@@ -84,7 +87,12 @@ MindSpore教程
    :caption: 分布式并行
    :hidden:
 
-   distributed_parallel/test
+   distributed_parallel/distributed_parallel_architecture
+   distributed_parallel/parallel_strategy
+   distributed_parallel/apply_adaptive_summation
+   distributed_parallel/distributed_inference
+   distributed_parallel/distributed_training_transformer
+   distributed_parallel/pangu_alpha
 
 .. toctree::
    :glob:
@@ -92,7 +100,11 @@ MindSpore教程
    :caption: 调试调优
    :hidden:
 
-   debugging_tuning/test
+   debugging_tuning/read_ir_files
+   debugging_tuning/debug_in_pynative_mode
+   debugging_tuning/dump_in_graph_mode
+   debugging_tuning/incremental_operator_build
+   debugging_tuning/custom_debugging_info
 
 .. toctree::
    :glob:
@@ -100,7 +112,11 @@ MindSpore教程
    :caption: 其他特性
    :hidden:
 
-   other_feature/test
+   other_feature/second_order_optimizer
+   other_feature/apply_quantization_aware_training
+   other_feature/apply_gradient_accumulation
+   other_feature/numpy
+   other_feature/custom_operator
 
 
 .. raw:: html
