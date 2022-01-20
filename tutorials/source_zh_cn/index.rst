@@ -49,7 +49,7 @@ MindSpore教程
    :caption: 自然语言处理
    :hidden:
 
-   nlp/test
+   nlp/bert_poetry
 
 .. toctree::
    :glob:
