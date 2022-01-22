@@ -11,23 +11,31 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
+from genericpath import exists
 import os
-import re
 import sys
-import sphinx
+
+from sphinx import directives
+with open('../_ext/overwriteobjectiondirective.txt', 'r') as f:
+    exec(f.read(), directives.__dict__)
+
+from docutils import statemachine
+
+with open(statemachine.__file__, 'r') as g:
+    code = g.read().replace("assert len(self.data) == len(self.items), 'data mismatch'", "#assert len(self.data) == len(self.items), 'data mismatch'")
+    exec(code, statemachine.__dict__)
+
 sys.path.append(os.path.abspath('../_ext'))
 import sphinx.ext.autosummary.generate as g
-from sphinx.ext import autodoc as sphinx_autodoc
 
 # -- Project information -----------------------------------------------------
 
 project = 'MindSpore'
 copyright = '2021, MindSpore'
 author = 'MindSpore'
-
+language = 'zh_CN'
 # The full version, including alpha/beta/rc tags
 release = 'master'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -79,11 +87,14 @@ intersphinx_mapping = {
     'numpy': ('https://docs.scipy.org/doc/numpy/', '../numpy_objects.inv'),
 }
 
-from myautosummary import MsPlatformAutoSummary, MsNoteAutoSummary
+from myautosummary import MsPlatformAutoSummary, MsNoteAutoSummary, CnMsAutoSummary, CnMsPlatformAutoSummary, CnMsNoteAutoSummary
 
 def setup(app):
     app.add_directive('msplatformautosummary', MsPlatformAutoSummary)
     app.add_directive('msnoteautosummary', MsNoteAutoSummary)
+    app.add_directive('cnmsautosummary', CnMsAutoSummary)
+    app.add_directive('cnmsplatformautosummary', CnMsPlatformAutoSummary)
+    app.add_directive('cnmsnoteautosummary', CnMsNoteAutoSummary)
 
 # Modify regex for sphinx.ext.autosummary.generate.find_autosummary_in_lines.
 gfile_abs_path = os.path.abspath(g.__file__)
@@ -94,85 +105,49 @@ with open(gfile_abs_path, "r+", encoding="utf8") as f:
     data = data.replace(autosummary_re_line_old, autosummary_re_line_new)
     exec(data, g.__dict__)
 
-# Modify default signatures for autodoc.
-autodoc_source_path = os.path.abspath(sphinx_autodoc.__file__)
-autodoc_source_re = re.compile(r'stringify_signature\(.*?\)')
-get_param_func_str = r"""\
-import re
-import inspect as inspect_
-
-def get_param_func(func):
-    try:
-        source_code = inspect_.getsource(func)
-        if func.__doc__:
-            source_code = source_code.replace(func.__doc__, '')
-        all_params_str = re.findall(r"def [\w_\d\-]+\(([\S\s]*?)(\):|\) ->.*?:)", source_code)
-        all_params = re.sub("(self|cls)(,|, )?", '', all_params_str[0][0].replace("\n", "").replace("'", "\""))
-        return all_params
-    except:
-        return ''
-
-def get_obj(obj):
-    if isinstance(obj, type):
-        return obj.__init__
-
-    return obj
-"""
-
-with open(autodoc_source_path, "r+", encoding="utf8") as f:
-    code_str = f.read()
-    code_str = autodoc_source_re.sub('"(" + get_param_func(get_obj(self.object)) + ")"', code_str, count=0)
-    exec(get_param_func_str, sphinx_autodoc.__dict__)
-    exec(code_str, sphinx_autodoc.__dict__)
-
-
-# Repair error decorators defined in mindspore.
-try:
-    decorator_list = [("mindspore/common/_decorator.py", "deprecated",
-                       "    def decorate(func):",
-                       "    def decorate(func):\n\n        import functools\n\n        @functools.wraps(func)")]
-
-    base_path = os.path.dirname(os.path.dirname(sphinx.__file__))
-    for i in decorator_list:
-        with open(os.path.join(base_path, os.path.normpath(i[0])), "r+", encoding="utf8") as f:
-            content = f.read()
-            if i[3] not in content:
-                content = content.replace(i[2], i[3])
-                f.seek(0)
-                f.truncate()
-                f.write(content)
-except:
-    pass
-
-import mindspore
-
 
 sys.path.append(os.path.abspath('../../../../resource/search'))
 import search_code
 
-# Copy images from mindspore repository to sphinx workdir before running.
-import glob
+# Copy source files of chinese python api from mindspore repository.
 import shutil
 from sphinx.util import logging
 logger = logging.getLogger(__name__)
 
-image_specified = {"docs/api_img/*.png": "./api_python/ops/api_img",
-                   "docs/api_img/dataset/*.png": "./api_python/dataset/api_img"}
+src_dir = os.path.join(os.getenv("MS_PATH"), 'docs/api/api_python')
+des_sir = "./api_python"
 
-for img in image_specified.keys():
-    des_dir = os.path.normpath(image_specified[img])
-    try:
-        if "*" in img:
-            imgs = glob.glob(os.path.join(os.getenv("MS_PATH"), os.path.normpath(img)))
-            if not imgs:
-                continue
-            if not os.path.exists(des_dir):
-                os.makedirs(des_dir)
-            for i in imgs:
-                shutil.copy(i, des_dir)
-        else:
-            img_fullpath = os.path.join(os.getenv("MS_PATH"), des_dir)
-            if os.path.exists(img_fullpath):
-                shutil.copy(img_fullpath, des_dir)
-    except:
-        logger.warning(f"{img} deal failed!")
+if not exists(src_dir):
+    logger.warning(f"不存在目录：{src_dir}！")
+if os.path.exists(des_sir):
+    shutil.rmtree(des_sir)
+shutil.copytree(src_dir, des_sir)
+
+# Convert encoding for api files.
+import chardet
+import codecs
+
+api_file_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'api_python')
+
+def convert2utf8(filename):
+    f = codecs.open(filename, 'rb')
+    content = f.read()
+    source_encoding = chardet.detect(content)['encoding']
+    if source_encoding == None:
+        logger.warning(f"{filename} 无编码格式！")
+    elif source_encoding != 'utf-8' and source_encoding != 'UTF-8-SIG':
+        content = content.decode(source_encoding, 'ignore')
+        codecs.open(filename, 'w', encoding='UTF-8-SIG').write(content)
+    f.close()
+
+for root, dirs, files in os.walk(api_file_dir, topdown=True):
+    for file_ in files:
+        if '.rst' in file_ or '.txt' in file_:
+            convert2utf8(os.path.join(root, file_))
+        if '.txt' in file_:
+            name_ = file_.split('.')[0]
+            full_name_ = name_ + '.rst'
+            try:
+                os.rename(os.path.join(root, file_), os.path.join(root, full_name_))
+            except:
+                logger.warning(f'{name_} rename failed!!')

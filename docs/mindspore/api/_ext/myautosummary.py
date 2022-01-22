@@ -1,5 +1,5 @@
 """Customized autosummary directives for sphinx."""
-
+import os
 import re
 from typing import List, Tuple
 from docutils.nodes import Node
@@ -234,3 +234,165 @@ class MsPlatformAutoSummary(MsAutosummary):
         self.find_doc_name = "Supported Platforms:"
         self.third_title = "**{}**".format(self.find_doc_name[:-1])
         self.default_doc = "To Be Developed"
+
+class CnMsAutoSummary(Autosummary):
+    """Overwrite MsPlatformAutosummary for chinese python api."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.table_head = ()
+
+    def get_summary_re(self, display_name: str):
+        return re.compile(rf'\.\. \w+:\w+::\s+{display_name}.*?\n\n\s+(.*?)[。\n]')
+
+    def run(self) -> List[Node]:
+        self.bridge = DocumenterBridge(self.env, self.state.document.reporter,
+                                       Options(), self.lineno, self.state)
+
+        names = [x.strip().split()[0] for x in self.content
+                 if x.strip() and re.search(r'^[~a-zA-Z_]', x.strip()[0])]
+        items = self.get_items(names)
+        #pylint: disable=redefined-outer-name
+        nodes = self.get_table(items)
+
+        dirname = posixpath.dirname(self.env.docname)
+
+        tree_prefix = self.options['toctree'].strip()
+        docnames = []
+        names = [i[0] for i in items]
+        for name in names:
+            docname = posixpath.join(tree_prefix, name)
+            docname = posixpath.normpath(posixpath.join(dirname, docname))
+            if docname not in self.env.found_docs:
+                continue
+
+            docnames.append(docname)
+
+        if docnames:
+            tocnode = addnodes.toctree()
+            tocnode['includefiles'] = docnames
+            tocnode['entries'] = [(None, docn) for docn in docnames]
+            tocnode['maxdepth'] = -1
+            tocnode['glob'] = None
+
+            nodes.append(autosummary_toc('', '', tocnode))
+
+        return nodes
+
+    def get_items(self, names: List[str]) -> List[Tuple[str, str, str, str]]:
+        """Try to import the given names, and return a list of
+        ``[(name, signature, summary_string, real_name), ...]``.
+        """
+        doc_path = os.path.dirname(self.state.document.current_source)
+        items = []  # type: List[Tuple[str, str, str, str]]
+
+        for name in names:
+            display_name = name
+            if name.startswith('~'):
+                name = name[1:]
+                display_name = name.split('.')[-1]
+
+            dir_name = self.options['toctree']
+            summary_re = self.get_summary_re(display_name)
+            content = ''
+            try:
+                with open(os.path.join(doc_path, dir_name, display_name+'.rst'), 'r', encoding='utf-8') as f:
+                    content = f.read()
+            except FileNotFoundError:
+                if os.path.exists(os.path.join(doc_path, dir_name, display_name.lower()+'.rst')):
+                    with open(os.path.join(doc_path, dir_name, display_name.lower()+'.rst'),
+                              'r', encoding='utf-8') as f:
+                        content = f.read()
+                else:
+                    print(f'{display_name}.rst：文件没找到！')
+                    continue
+            if content:
+                summary_str = summary_re.findall(content)
+                if summary_str:
+                    summary_str = summary_str[0] + '。'
+                else:
+                    summary_str = ''
+                if not self.table_head:
+                    items.append((display_name, summary_str))
+                else:
+                    third_str = self.third_re.findall(content)
+                    if third_str:
+                        third_str = third_str[0]
+                    else:
+                        third_str = ''
+
+                    items.append((display_name, summary_str, third_str))
+
+        return items
+
+    def get_table(self, items: List[Tuple[str, str, str]]) -> List[Node]:
+        """Generate a proper list of table nodes for autosummary:: directive.
+
+        *items* is a list produced by :meth:`get_items`.
+        """
+        table_spec = addnodes.tabular_col_spec()
+        table = autosummary_table('')
+        real_table = nodes.table('', classes=['longtable'])
+        table.append(real_table)
+
+        if not self.table_head:
+            table_spec['spec'] = r'\X{1}{2}\X{1}{2}'
+            group = nodes.tgroup('', cols=2)
+            real_table.append(group)
+            group.append(nodes.colspec('', colwidth=10))
+            group.append(nodes.colspec('', colwidth=90))
+        else:
+            table_spec['spec'] = r'\X{1}{2}\X{1}{2}\X{1}{2}'
+            group = nodes.tgroup('', cols=3)
+            real_table.append(group)
+            group.append(nodes.colspec('', colwidth=10))
+            group.append(nodes.colspec('', colwidth=60))
+            group.append(nodes.colspec('', colwidth=30))
+        body = nodes.tbody('')
+        group.append(body)
+
+        def append_row(*column_texts: str) -> None:
+            row = nodes.row('')
+            source, line = self.state_machine.get_source_and_line()
+            for text in column_texts:
+                node = nodes.paragraph('')
+                vl = StringList()
+                vl.append(text, '%s:%d:<autosummary>' % (source, line))
+                with switch_source_input(self.state, vl):
+                    self.state.nested_parse(vl, 0, node)
+                    try:
+                        if isinstance(node[0], nodes.paragraph):
+                            node = node[0]
+                    except IndexError:
+                        pass
+                    row.append(nodes.entry('', node))
+            body.append(row)
+        append_row(*self.table_head)
+        if not self.table_head:
+            for name, summary in items:
+                qualifier = 'obj'
+                col1 = ':%s:`%s <%s>`' % (qualifier, name, name)
+                col2 = summary
+                append_row(col1, col2)
+        else:
+            for name, summary, other in items:
+                qualifier = 'obj'
+                col1 = ':%s:`%s <%s>`' % (qualifier, name, name)
+                col2 = summary
+                col3 = other
+                append_row(col1, col2, col3)
+        return [table_spec, table]
+
+
+class CnMsPlatformAutoSummary(CnMsAutoSummary):
+    """definition of cnmsplatformautosummary."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.third_re = re.compile(r'\s+\*\*支持平台：\*\*\n\n\s+(``.*``)\n')
+        self.table_head = ('接口名', '概述', '支持平台')
+
+class CnMsNoteAutoSummary(CnMsAutoSummary):
+    """definition of cnmsnoteautosummary."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.third_re = re.compile(rf'\.\. note::\n\n\s+(.*?)[。\n]')
+        self.table_head = ('接口名', '概述', '说明')
