@@ -29,7 +29,7 @@ def dupname(node, name):
     node.referenced = 1
 """
 
-before = "        node['ids'].append(id)"
+before = "            node['ids'].append(id)"
 after = """\
         if node['names']:
             id = node['names'][0]
