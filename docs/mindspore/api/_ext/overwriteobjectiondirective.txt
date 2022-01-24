@@ -1,4 +1,6 @@
 import re
+import inspect
+import importlib
 from typing import Any, Dict, List, Tuple
 from typing import cast
 
@@ -37,32 +39,48 @@ def optional_int(argument):
             raise ValueError('negative value; must be positive or zero')
         return value
 
-def get_example(fullname: str, objtype: str):
+def get_api(fullname):
     try:
-        if objtype in ["class", "function"]:
-            api_module, api_name = ".".join(fullname.split('.')[:-1]), fullname.split('.')[-1]
-        elif objtype == "method":
-            api_module, api_name, method_name = ".".join(fullname.split('.')[:-2]), fullname.split('.')[-2], fullname.split('.')[-1]
-        exec(f"from {api_module} import {api_name} as api")
-        exec(f"from {api_module} import {api_name} as api")
-        if objtype == "method":
-            api_doc = eval(f'api.{method_name}.__doc__')
-        else:
-            api_doc = eval('api.__doc__')
-        example_str = re.findall(r'\s+Examples:\n([\w\W]*?)(\n\n|$)', api_doc)
+        module_name, api_name= ".".join(fullname.split('.')[:-1]), fullname.split('.')[-1]
+        module_import = importlib.import_module(module_name)
+    except ModuleNotFoundError:
+        module_name, api_name = ".".join(fullname.split('.')[:-2]), ".".join(fullname.split('.')[-2:])
+        module_import = importlib.import_module(module_name)
+    api = eval(f"module_import.{api_name}")
+    return api
+
+def get_example(name: str):
+    try:
+        api_doc = inspect.getdoc(get_api(name))
+        example_str = re.findall(r'Examples:\n([\w\W]*?)(\n\n|$)', api_doc)
         if not example_str:
             return []
         example_str = re.sub(r'\n\s+', r'\n', example_str[0][0])
         example_str = example_str.strip()
         example_list = example_str.split('\n')
         return ["", "**样例：**", ""] + example_list + [""]
-    except ImportError:
-        logger.warning(f"{fullname}接口导入失败！")
+    except (NameError, AttributeError):
+        logger.warning(f"{name}接口无法导入！")
         return []
     except:
-        logger.warning(f"{fullname}接口deal`失败！")
+        logger.warning(f"{name}接口处理失败！")
         return []
 
+def get_platforms(name: str):
+    try:
+        api_doc = inspect.getdoc(get_api(name))
+        example_str = re.findall(r'Supported Platforms:\n\s+(.*?)\n\n', api_doc)
+        if not example_str:
+            return []
+        example_str = example_str[0].strip()
+        example_list = example_str.split('\n')
+        return ["", "**支持平台：**", ""] + example_list + [""]
+    except (NameError, AttributeError):
+        logger.warning(f"{name}接口无法导入！")
+        return []
+    except:
+        logger.warning(f"{name}接口处理失败！")
+        return []
 
 class ObjectDescription(SphinxDirective):
     """
@@ -147,6 +165,18 @@ class ObjectDescription(SphinxDirective):
         """
         pass
 
+    def check_class_end(self, content):
+        for i in content:
+            if not i.startswith('.. include::') and i != "\n" and i != "":
+                return False
+        return True
+
+    def extend_items(self, rst_file, start_num, num):
+        ls = []
+        for i in range(1, num+1):
+            ls.append((rst_file, start_num+i))
+        return ls
+
     def run(self) -> List[Node]:
         """
         Main directive entry function, called by docutils upon encountering the
@@ -209,22 +239,25 @@ class ObjectDescription(SphinxDirective):
             # needed for association of version{added,changed} directives
             self.env.temp_data['object'] = self.names[0]
         self.before_content()
-        example = get_example(self.names[0][0], self.objtype)
-        if example:
+        example = get_example(self.names[0][0])
+        platforms = get_platforms(self.names[0][0])
+        extra = platforms + example
+        if extra:
             if self.objtype == "method":
-                self.content.data.extend(example)
+                self.content.data.extend(extra)
             else:
                 index_num = 0
                 for num, i in enumerate(self.content.data):
-                    if i.startswith('.. py:method::'):
+                    if i.startswith('.. py:method::') or self.check_class_end(self.content.data[num:]):
                         index_num = num
                         break
                 if index_num:
                     count = len(self.content.data)
-                    for i in example:
+                    for i in extra:
                         self.content.data.insert(index_num-count, i)
                 else:
-                    self.content.data.extend(example)
+                    self.content.data.extend(extra)
+        self.content.items.extend(self.extend_items(self.content.items[0][0], self.content.items[-1][1], len(extra)))
         self.state.nested_parse(self.content, self.content_offset, contentnode)
         self.env.app.emit('object-description-transform',
                           self.domain, self.objtype, contentnode)
