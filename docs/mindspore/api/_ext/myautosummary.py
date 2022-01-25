@@ -414,10 +414,12 @@ class CnMsPlatformAutoSummary(CnMsAutoSummary):
             example_str = re.findall(r'Supported Platforms:\n\s+(.*?)\n\n', api_doc)
             return example_str
         except (NameError, AttributeError):
-            logger.warning(f"{name}接口无法导入！")
+            if "." in name:
+                logger.warning(f"{name} import failed!")
             return []
         except: #pylint: disable=bare-except
-            logger.warning(f"{name}接口处理失败！")
+            if "." in name:
+                logger.warning(f"{name} deal failed!")
             return []
 
 

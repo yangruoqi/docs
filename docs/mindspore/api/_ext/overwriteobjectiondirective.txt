@@ -60,10 +60,12 @@ def get_example(name: str):
         example_list = example_str.split('\n')
         return ["", "**样例：**", ""] + example_list + [""]
     except (NameError, AttributeError):
-        logger.warning(f"{name}接口无法导入！")
+        if '.' in name:
+            logger.warning(f"Get example: {name} import failed!")
         return []
     except:
-        logger.warning(f"{name}接口处理失败！")
+        if '.' in name:
+            logger.warning(f"Get example: {name} deal failed!")
         return []
 
 def get_platforms(name: str):
@@ -76,10 +78,10 @@ def get_platforms(name: str):
         example_list = example_str.split('\n')
         return ["", "**支持平台：**", ""] + example_list + [""]
     except (NameError, AttributeError):
-        logger.warning(f"{name}接口无法导入！")
+        logger.warning(f"Get platforms: {name} import failed!")
         return []
     except:
-        logger.warning(f"{name}接口处理失败！")
+        logger.warning(f"Get platforms: {name} deal failed!")
         return []
 
 class ObjectDescription(SphinxDirective):
