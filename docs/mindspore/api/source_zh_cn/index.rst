@@ -15,7 +15,7 @@ MindSpore API
    api_python/mindspore.communication
    api_python/mindspore.context
    api_python/mindspore.dataset
-   api_python/mindspore.dataset_audio
+   api_python/mindspore.dataset.audio
    api_python/mindspore.nn
    api_python/mindspore.nn.probability
    api_python/mindspore.ops
