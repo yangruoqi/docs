@@ -1,6 +1,8 @@
 """Customized autosummary directives for sphinx."""
 import os
 import re
+import inspect
+import importlib
 from typing import List, Tuple
 from docutils.nodes import Node
 from sphinx.locale import __
@@ -314,7 +316,7 @@ class CnMsAutoSummary(Autosummary):
                 if not self.table_head:
                     items.append((display_name, summary_str))
                 else:
-                    third_str = self.third_re.findall(content)
+                    third_str = self.get_third_column(display_name, content)
                     if third_str:
                         third_str = third_str[0]
                     else:
@@ -383,16 +385,49 @@ class CnMsAutoSummary(Autosummary):
         return [table_spec, table]
 
 
+def get_api(fullname):
+    """Get the api module."""
+    try:
+        module_name, api_name = ".".join(fullname.split('.')[:-1]), fullname.split('.')[-1]
+        # pylint: disable=unused-variable
+        module_import = importlib.import_module(module_name)
+    except ModuleNotFoundError:
+        module_name, api_name = ".".join(fullname.split('.')[:-2]), ".".join(fullname.split('.')[-2:])
+        module_import = importlib.import_module(module_name)
+    # pylint: disable=eval-used
+    api = eval(f"module_import.{api_name}")
+    return api
+
+
 class CnMsPlatformAutoSummary(CnMsAutoSummary):
     """definition of cnmsplatformautosummary."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.third_re = re.compile(r'\s+\*\*支持平台：\*\*\n\n\s+(``.*``)\n')
         self.table_head = ('接口名', '概述', '支持平台')
+
+    def get_third_column(self, name=None, content=None):
+        """Get the`Supported Platforms`."""
+        if not name:
+            return []
+        try:
+            api_doc = inspect.getdoc(get_api(name))
+            example_str = re.findall(r'Supported Platforms:\n\s+(.*?)\n\n', api_doc)
+            return example_str
+        except (NameError, AttributeError):
+            logger.warning(f"{name}接口无法导入！")
+            return []
+        except: #pylint: disable=bare-except
+            logger.warning(f"{name}接口处理失败！")
+            return []
+
 
 class CnMsNoteAutoSummary(CnMsAutoSummary):
     """definition of cnmsnoteautosummary."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.third_re = re.compile(rf'\.\. note::\n\n\s+(.*?)[。\n]')
         self.table_head = ('接口名', '概述', '说明')
+
+    def get_third_column(self, name=None, content=''):
+        note_re = re.compile(rf'\.\. note::\n\n\s+(.*?)[。\n]')
+        third_str = note_re.findall(content)
+        return third_str
