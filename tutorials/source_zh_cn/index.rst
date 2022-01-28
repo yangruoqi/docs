@@ -124,9 +124,9 @@ MindSpore教程
 .. raw:: html
 
    <div class="container">
-         <h3>面向新手</h3>
+         <h2>面向新手</h2>
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./beginner/quick_start.html" class="article-link">
@@ -135,14 +135,14 @@ MindSpore教程
                               <span class="doc-head-content">快速入门</span>
                            </div>
                            <div class="doc-article-desc">
-                              使用Mindspore实现线性回归算法。
+                              使用MindSpore实现线性回归算法。
                            </div>
                         </div>
                      </a>
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./intermediate/dataset_load_process.html" class="article-link">
@@ -160,7 +160,7 @@ MindSpore教程
 				</div>
 			</div>
          <div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./intermediate/build_net.html" class="article-link">
@@ -169,14 +169,14 @@ MindSpore教程
                               <span class="doc-head-content">网络构建</span>
                            </div>
                            <div class="doc-article-desc">
-                              使用Mindspore实现线性回归算法。
+                              详细描述待更新。
                            </div>
                         </div>
                      </a>
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./intermediate/pynative_mode_and_graph_mode.html" class="article-link">
@@ -193,9 +193,9 @@ MindSpore教程
 					</div>
 				</div>
 			</div>
-         <h3>面向专家</h3>
+         <h2>面向专家</h2>
          <div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./data_engine/eager.html" class="article-link">
@@ -211,7 +211,7 @@ MindSpore教程
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./compiler_optimization/enable_graph_kernel_fusion.html" class="article-link">
@@ -229,7 +229,7 @@ MindSpore教程
 				</div>
 			</div>
          <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./model_infer/inference.html" class="article-link">
@@ -245,7 +245,7 @@ MindSpore教程
                   </div>
 					</div>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./distributed_parallel/distributed_parallel_architecture.html" class="article-link">
@@ -263,7 +263,7 @@ MindSpore教程
 				</div>
 			</div>
          <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./debugging_tuning/read_ir_files.html" class="article-link">
@@ -279,7 +279,7 @@ MindSpore教程
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./other_feature/second_order_optimizer.html" class="article-link">
@@ -296,9 +296,9 @@ MindSpore教程
 					</div>
 				</div>
          </div>
-         <h3>应用实践</h3>
+         <h2>应用实践</h2>
          <div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./cv/cv_resnet50.html" class="article-link">
@@ -314,7 +314,7 @@ MindSpore教程
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./nlp/bert_poetry.html" class="article-link">
