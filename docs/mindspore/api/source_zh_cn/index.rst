@@ -19,6 +19,7 @@ MindSpore API
    api_python/mindspore.nn
    api_python/mindspore.nn.probability
    api_python/mindspore.ops
+   api_python/mindspore.profiler
    api_python/mindspore.train
 
 .. toctree::
