@@ -224,7 +224,6 @@ class MsNoteAutoSummary(MsAutosummary):
                 env_sum = piece[10:]
         return env_sum
 
-
 class MsPlatformAutoSummary(MsAutosummary):
     """
     Inherited from MsAutosummary. Add a third column about `Supported Platforms` to the table.
@@ -242,6 +241,21 @@ class CnMsAutoSummary(Autosummary):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.table_head = ()
+        self.find_doc_name = ""
+        self.third_title = ""
+        self.default_doc = ""
+        self.third_name_en = ""
+
+    def get_third_column_en(self, doc):
+        """Get the third column for en."""
+        third_column = self.default_doc
+        for i, piece in enumerate(doc):
+            if piece.startswith(self.third_name_en):
+                try:
+                    third_column = doc[i+1][4:]
+                except IndexError:
+                    third_column = ''
+        return third_column
 
     def get_summary_re(self, display_name: str):
         return re.compile(rf'\.\. \w+:\w+::\s+{display_name}.*?\n\n\s+(.*?)[。\n]')
@@ -284,8 +298,13 @@ class CnMsAutoSummary(Autosummary):
         """Try to import the given names, and return a list of
         ``[(name, signature, summary_string, real_name), ...]``.
         """
+        prefixes = get_import_prefixes_from_env(self.env)
         doc_path = os.path.dirname(self.state.document.current_source)
         items = []  # type: List[Tuple[str, str, str, str]]
+        max_item_chars = 50
+        origin_rst_files = self.env.config.rst_files
+        all_rst_files = self.env.found_docs
+        generated_files = all_rst_files.difference(origin_rst_files)
 
         for name in names:
             display_name = name
@@ -294,35 +313,96 @@ class CnMsAutoSummary(Autosummary):
                 display_name = name.split('.')[-1]
 
             dir_name = self.options['toctree']
-            summary_re = self.get_summary_re(display_name)
-            content = ''
-            try:
+            spec_path = os.path.join('api_python', dir_name, display_name)
+            file_path = os.path.join(doc_path, dir_name, display_name+'.rst')
+            if os.path.exists(file_path) and spec_path not in generated_files:
+                summary_re = self.get_summary_re(display_name)
+                content = ''
                 with open(os.path.join(doc_path, dir_name, display_name+'.rst'), 'r', encoding='utf-8') as f:
                     content = f.read()
-            except FileNotFoundError:
-                if os.path.exists(os.path.join(doc_path, dir_name, display_name.lower()+'.rst')):
-                    with open(os.path.join(doc_path, dir_name, display_name.lower()+'.rst'),
-                              'r', encoding='utf-8') as f:
-                        content = f.read()
-                else:
-                    print(f'{display_name}.rst：文件没找到！')
-                    continue
-            if content:
-                summary_str = summary_re.findall(content)
-                if summary_str:
-                    summary_str = summary_str[0] + '。'
-                else:
-                    summary_str = ''
-                if not self.table_head:
-                    items.append((display_name, summary_str))
-                else:
-                    third_str = self.get_third_column(display_name, content)
-                    if third_str:
-                        third_str = third_str[0]
+                if content:
+                    summary_str = summary_re.findall(content)
+                    if summary_str:
+                        summary_str = summary_str[0] + '。'
                     else:
-                        third_str = ''
+                        summary_str = ''
+                    if not self.table_head:
+                        items.append((display_name, summary_str))
+                    else:
+                        third_str = self.get_third_column(display_name, content)
+                        if third_str:
+                            third_str = third_str[0]
+                        else:
+                            third_str = ''
 
-                    items.append((display_name, summary_str, third_str))
+                        items.append((display_name, summary_str, third_str))
+            else:
+                try:
+                    with mock(self.config.autosummary_mock_imports):
+                        real_name, obj, parent, modname = import_by_name(name, prefixes=prefixes)
+                except ImportError:
+                    logger.warning(__('failed to import %s'), name)
+                    items.append((name, '', ''))
+                    continue
+
+                self.bridge.result = StringList()  # initialize for each documenter
+                full_name = real_name
+                if not isinstance(obj, ModuleType):
+                    # give explicitly separated module name, so that members
+                    # of inner classes can be documented
+                    full_name = modname + '::' + full_name[len(modname) + 1:]
+                # NB. using full_name here is important, since Documenters
+                #     handle module prefixes slightly differently
+                doccls = get_documenter(self.env.app, obj, parent)
+                documenter = doccls(self.bridge, full_name)
+
+                if not documenter.parse_name():
+                    logger.warning(__('failed to parse name %s'), real_name)
+                    items.append((display_name, '', ''))
+                    continue
+                if not documenter.import_object():
+                    logger.warning(__('failed to import object %s'), real_name)
+                    items.append((display_name, '', ''))
+                    continue
+                if documenter.options.members and not documenter.check_module():
+                    continue
+
+                # try to also get a source code analyzer for attribute docs
+                try:
+                    documenter.analyzer = ModuleAnalyzer.for_module(
+                        documenter.get_real_modname())
+                    # parse right now, to get PycodeErrors on parsing (results will
+                    # be cached anyway)
+                    documenter.analyzer.find_attr_docs()
+                except PycodeError as err:
+                    logger.debug('[autodoc] module analyzer failed: %s', err)
+                    # no source file -- e.g. for builtin and C modules
+                    documenter.analyzer = None
+
+                # -- Grab the signature
+
+                try:
+                    sig = documenter.format_signature(show_annotation=False)
+                except TypeError:
+                    # the documenter does not support ``show_annotation`` option
+                    sig = documenter.format_signature()
+
+                if not sig:
+                    sig = ''
+                else:
+                    max_chars = max(10, max_item_chars - len(display_name))
+                    sig = mangle_signature(sig, max_chars=max_chars)
+
+                # -- Grab the summary and third_colum
+
+                documenter.add_content(None)
+                summary = extract_summary(self.bridge.result.data[:], self.state.document)
+                if self.table_head:
+                    third_colum = self.get_third_column_en(self.bridge.result.data[:])
+                    items.append((display_name, summary, third_colum))
+                else:
+                    items.append((display_name, summary))
+
 
         return items
 
@@ -384,7 +464,6 @@ class CnMsAutoSummary(Autosummary):
                 append_row(col1, col2, col3)
         return [table_spec, table]
 
-
 def get_api(fullname):
     """Get the api module."""
     try:
@@ -398,12 +477,12 @@ def get_api(fullname):
     api = eval(f"module_import.{api_name}")
     return api
 
-
 class CnMsPlatformAutoSummary(CnMsAutoSummary):
     """definition of cnmsplatformautosummary."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.table_head = ('接口名', '概述', '支持平台')
+        self.third_name_en = "Supported Platforms:"
 
     def get_third_column(self, name=None, content=None):
         """Get the`Supported Platforms`."""
@@ -413,21 +492,15 @@ class CnMsPlatformAutoSummary(CnMsAutoSummary):
             api_doc = inspect.getdoc(get_api(name))
             example_str = re.findall(r'Supported Platforms:\n\s+(.*?)\n\n', api_doc)
             return example_str
-        except (NameError, AttributeError):
-            if "." in name:
-                logger.warning(f"{name} import failed!")
-            return []
         except: #pylint: disable=bare-except
-            if "." in name:
-                logger.warning(f"{name} deal failed!")
             return []
-
 
 class CnMsNoteAutoSummary(CnMsAutoSummary):
     """definition of cnmsnoteautosummary."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.table_head = ('接口名', '概述', '说明')
+        self.third_name_en = ".. note::"
 
     def get_third_column(self, name=None, content=''):
         note_re = re.compile(rf'\.\. note::\n\n\s+(.*?)[。\n]')

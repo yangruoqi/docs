@@ -59,13 +59,7 @@ def get_example(name: str):
         example_str = example_str.strip()
         example_list = example_str.split('\n')
         return ["", "**样例：**", ""] + example_list + [""]
-    except (NameError, AttributeError):
-        if '.' in name:
-            logger.warning(f"Get example: {name} import failed!")
-        return []
     except:
-        if '.' in name:
-            logger.warning(f"Get example: {name} deal failed!")
         return []
 
 def get_platforms(name: str):
@@ -77,11 +71,7 @@ def get_platforms(name: str):
         example_str = example_str[0].strip()
         example_list = example_str.split('\n')
         return ["", "**支持平台：**", ""] + example_list + [""]
-    except (NameError, AttributeError):
-        logger.warning(f"Get platforms: {name} import failed!")
-        return []
     except:
-        logger.warning(f"Get platforms: {name} deal failed!")
         return []
 
 class ObjectDescription(SphinxDirective):
@@ -241,8 +231,13 @@ class ObjectDescription(SphinxDirective):
             # needed for association of version{added,changed} directives
             self.env.temp_data['object'] = self.names[0]
         self.before_content()
-        example = get_example(self.names[0][0])
-        platforms = get_platforms(self.names[0][0])
+        try:
+            example = get_example(self.names[0][0])
+            platforms = get_platforms(self.names[0][0])
+        except IndexError:
+            example = ''
+            platforms = ''
+            logger.Warning(f'Error API names in {self.arguments[0]}.')
         extra = platforms + example
         if extra:
             if self.objtype == "method":

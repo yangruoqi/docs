@@ -12,8 +12,10 @@
 #
 
 from genericpath import exists
+import re
 import os
 import sys
+import glob
 
 from sphinx import directives
 with open('../_ext/overwriteobjectiondirective.txt', 'r') as f:
@@ -28,12 +30,48 @@ with open(statemachine.__file__, 'r') as g:
 sys.path.append(os.path.abspath('../_ext'))
 import sphinx.ext.autosummary.generate as g
 
+from sphinx.ext import autodoc as sphinx_autodoc
+# Modify default signatures for autodoc.
+autodoc_source_path = os.path.abspath(sphinx_autodoc.__file__)
+autodoc_source_re = re.compile(r'stringify_signature\(.*?\)')
+get_param_func_str = r"""\
+import re
+import inspect as inspect_
+
+def get_param_func(func):
+    try:
+        source_code = inspect_.getsource(func)
+        if func.__doc__:
+            source_code = source_code.replace(func.__doc__, '')
+        all_params_str = re.findall(r"def [\w_\d\-]+\(([\S\s]*?)(\):|\) ->.*?:)", source_code)
+        all_params = re.sub("(self|cls)(,|, )?", '', all_params_str[0][0].replace("\n", "").replace("'", "\""))
+        return all_params
+    except:
+        return ''
+
+def get_obj(obj):
+    if isinstance(obj, type):
+        return obj.__init__
+
+    return obj
+"""
+
+with open(autodoc_source_path, "r+", encoding="utf8") as f:
+    code_str = f.read()
+    code_str = autodoc_source_re.sub('"(" + get_param_func(get_obj(self.object)) + ")"', code_str, count=0)
+    exec(get_param_func_str, sphinx_autodoc.__dict__)
+    exec(code_str, sphinx_autodoc.__dict__)
+
+with open("../_ext/customdocumenter.txt", "r") as f:
+    code_str = f.read()
+    exec(code_str, sphinx_autodoc.__dict__)
+
 # -- Project information -----------------------------------------------------
 
 project = 'MindSpore'
 copyright = '2021, MindSpore'
 author = 'MindSpore'
-language = 'zh_CN'
+# language = 'cn'
 # The full version, including alpha/beta/rc tags
 release = 'master'
 
@@ -60,6 +98,8 @@ source_suffix = {
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+# locale_dirs = ['locale/']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -89,17 +129,11 @@ intersphinx_mapping = {
 
 from myautosummary import MsPlatformAutoSummary, MsNoteAutoSummary, CnMsAutoSummary, CnMsPlatformAutoSummary, CnMsNoteAutoSummary
 
-def setup(app):
-    app.add_directive('msplatformautosummary', MsPlatformAutoSummary)
-    app.add_directive('msnoteautosummary', MsNoteAutoSummary)
-    app.add_directive('cnmsautosummary', CnMsAutoSummary)
-    app.add_directive('cnmsplatformautosummary', CnMsPlatformAutoSummary)
-    app.add_directive('cnmsnoteautosummary', CnMsNoteAutoSummary)
 
 # Modify regex for sphinx.ext.autosummary.generate.find_autosummary_in_lines.
 gfile_abs_path = os.path.abspath(g.__file__)
 autosummary_re_line_old = r"autosummary_re = re.compile(r'^(\s*)\.\.\s+autosummary::\s*')"
-autosummary_re_line_new = r"autosummary_re = re.compile(r'^(\s*)\.\.\s+(ms[a-z]*)?autosummary::\s*')"
+autosummary_re_line_new = r"autosummary_re = re.compile(r'^(\s*)\.\.\s+(cnms[a-z]*)?autosummary::\s*')"
 with open(gfile_abs_path, "r+", encoding="utf8") as f:
     data = f.read()
     data = data.replace(autosummary_re_line_old, autosummary_re_line_new)
@@ -123,6 +157,17 @@ if os.path.exists(des_sir):
     shutil.rmtree(des_sir)
 shutil.copytree(src_dir, des_sir)
 
+rst_files = set([i.replace('.rst', '') for i in glob.glob('api_python/**/*.rst', recursive=True)])
+
+def setup(app):
+    app.add_directive('msplatformautosummary', MsPlatformAutoSummary)
+    app.add_directive('msnoteautosummary', MsNoteAutoSummary)
+    app.add_directive('cnmsautosummary', CnMsAutoSummary)
+    app.add_directive('cnmsplatformautosummary', CnMsPlatformAutoSummary)
+    app.add_directive('cnmsnoteautosummary', CnMsNoteAutoSummary)
+    app.add_config_value('rst_files', set(), False)
+
+
 # Convert encoding for api files.
 import chardet
 import codecs
@@ -134,7 +179,7 @@ def convert2utf8(filename):
     content = f.read()
     source_encoding = chardet.detect(content)['encoding']
     if source_encoding == None:
-        logger.warning(f"{filename} 无编码格式！")
+        pass
     elif source_encoding != 'utf-8' and source_encoding != 'UTF-8-SIG':
         content = content.decode(source_encoding, 'ignore')
         codecs.open(filename, 'w', encoding='UTF-8-SIG').write(content)
