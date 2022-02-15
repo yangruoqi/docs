@@ -127,7 +127,7 @@ intersphinx_mapping = {
     'numpy': ('https://docs.scipy.org/doc/numpy/', '../numpy_objects.inv'),
 }
 
-from myautosummary import MsPlatformAutoSummary, MsNoteAutoSummary, CnMsAutoSummary, CnMsPlatformAutoSummary, CnMsNoteAutoSummary
+from myautosummary import MsPlatformAutoSummary, MsNoteAutoSummary, MsCnAutoSummary, MsCnPlatformAutoSummary, MsCnNoteAutoSummary
 
 
 # Modify regex for sphinx.ext.autosummary.generate.find_autosummary_in_lines.
@@ -162,9 +162,9 @@ rst_files = set([i.replace('.rst', '') for i in glob.glob('api_python/**/*.rst',
 def setup(app):
     app.add_directive('msplatformautosummary', MsPlatformAutoSummary)
     app.add_directive('msnoteautosummary', MsNoteAutoSummary)
-    app.add_directive('cnmsautosummary', CnMsAutoSummary)
-    app.add_directive('cnmsplatformautosummary', CnMsPlatformAutoSummary)
-    app.add_directive('cnmsnoteautosummary', CnMsNoteAutoSummary)
+    app.add_directive('mscnautosummary', MsCnAutoSummary)
+    app.add_directive('mscnplatformautosummary', MsCnPlatformAutoSummary)
+    app.add_directive('mscnnoteautosummary', MsCnNoteAutoSummary)
     app.add_config_value('rst_files', set(), False)
 
 

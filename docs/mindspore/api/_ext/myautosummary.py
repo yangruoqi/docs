@@ -11,6 +11,7 @@ from sphinx.ext.autosummary import mock, StringList, ModuleType, get_documenter,
 from sphinx.ext.autosummary import import_by_name, extract_summary, autosummary_table, nodes, switch_source_input, rst
 from sphinx.ext.autodoc.directive import DocumenterBridge, Options
 
+
 class MsAutosummary(Autosummary):
     """
     Inherited from sphinx's autosummary, add titles and a column for the generated table.
@@ -236,7 +237,7 @@ class MsPlatformAutoSummary(MsAutosummary):
         self.third_title = "**{}**".format(self.find_doc_name[:-1])
         self.default_doc = "To Be Developed"
 
-class CnMsAutoSummary(Autosummary):
+class MsCnAutoSummary(Autosummary):
     """Overwrite MsPlatformAutosummary for chinese python api."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -477,7 +478,7 @@ def get_api(fullname):
     api = eval(f"module_import.{api_name}")
     return api
 
-class CnMsPlatformAutoSummary(CnMsAutoSummary):
+class MsCnPlatformAutoSummary(MsCnAutoSummary):
     """definition of cnmsplatformautosummary."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -495,7 +496,7 @@ class CnMsPlatformAutoSummary(CnMsAutoSummary):
         except: #pylint: disable=bare-except
             return []
 
-class CnMsNoteAutoSummary(CnMsAutoSummary):
+class MsCnNoteAutoSummary(MsCnAutoSummary):
     """definition of cnmsnoteautosummary."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
