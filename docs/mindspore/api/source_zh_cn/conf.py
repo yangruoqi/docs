@@ -133,7 +133,7 @@ from myautosummary import MsPlatformAutoSummary, MsNoteAutoSummary, MsCnAutoSumm
 # Modify regex for sphinx.ext.autosummary.generate.find_autosummary_in_lines.
 gfile_abs_path = os.path.abspath(g.__file__)
 autosummary_re_line_old = r"autosummary_re = re.compile(r'^(\s*)\.\.\s+autosummary::\s*')"
-autosummary_re_line_new = r"autosummary_re = re.compile(r'^(\s*)\.\.\s+(cnms[a-z]*)?autosummary::\s*')"
+autosummary_re_line_new = r"autosummary_re = re.compile(r'^(\s*)\.\.\s+(ms[a-z]*)?autosummary::\s*')"
 with open(gfile_abs_path, "r+", encoding="utf8") as f:
     data = f.read()
     data = data.replace(autosummary_re_line_old, autosummary_re_line_new)
