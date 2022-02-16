@@ -91,6 +91,7 @@ MindSpore教程
    distributed_parallel/parallel_strategy
    distributed_parallel/apply_adaptive_summation
    distributed_parallel/distributed_inference
+   distributed_parallel/communication_primitive
    distributed_parallel/distributed_training_transformer
    distributed_parallel/pangu_alpha
 
