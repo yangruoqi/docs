@@ -27,6 +27,7 @@ MindSpore教程
    :caption: 进阶
    :hidden:
 
+   intermediate/linear_fitting
    intermediate/dataset_load_process
    intermediate/build_net
    intermediate/pynative_mode_and_graph_mode
