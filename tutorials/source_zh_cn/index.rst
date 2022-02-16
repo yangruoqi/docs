@@ -18,9 +18,8 @@ MindSpore教程
    beginner/dataset
    beginner/model
    beginner/autograd
-   beginner/model_train
-   beginner/save_load_model
-   beginner/basic_process_deep_learning
+   beginner/train
+   beginner/save_load
 
 .. toctree::
    :glob:
