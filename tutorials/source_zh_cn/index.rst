@@ -20,7 +20,6 @@ MindSpore教程
    beginner/autograd
    beginner/train
    beginner/save_load
-   beginner/infer
 
 .. toctree::
    :glob:
@@ -28,7 +27,6 @@ MindSpore教程
    :caption: 进阶
    :hidden:
 
-   intermediate/linear_fitting
    intermediate/dataset_load_process
    intermediate/build_net
    intermediate/pynative_mode_and_graph_mode
@@ -137,7 +135,7 @@ MindSpore教程
                               <span class="doc-head-content">快速入门</span>
                            </div>
                            <div class="doc-article-desc">
-                              使用MindSpore实现手写数字识别。
+                              使用MindSpore实现线性回归算法。
                            </div>
                         </div>
                      </a>
