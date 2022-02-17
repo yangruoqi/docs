@@ -137,7 +137,7 @@ MindSpore教程
                               <span class="doc-head-content">快速入门</span>
                            </div>
                            <div class="doc-article-desc">
-                              使用MindSpore实现线性回归算法。
+                              使用MindSpore实现手写数字识别。
                            </div>
                         </div>
                      </a>
