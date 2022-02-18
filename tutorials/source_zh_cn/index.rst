@@ -32,6 +32,7 @@ MindSpore教程
    intermediate/dataset_load_process
    intermediate/build_net
    intermediate/pynative_mode_and_graph_mode
+   intermediate/callback
 
 .. toctree::
    :glob:
