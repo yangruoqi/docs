@@ -33,6 +33,9 @@ MindSpore教程
    intermediate/build_net
    intermediate/pynative_mode_and_graph_mode
    intermediate/callback
+   intermediate/control_flow
+   intermediate/hypermap
+   intermediate/grad_operation
 
 .. toctree::
    :glob:
