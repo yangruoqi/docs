@@ -29,7 +29,7 @@ MindSpore教程
    :hidden:
 
    intermediate/linear_fitting
-   intermediate/dataset_load_process
+   intermediate/dataset
    intermediate/build_net
    intermediate/pynative_mode_and_graph_mode
    intermediate/callback
