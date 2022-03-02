@@ -54,6 +54,7 @@ MindSpore教程
    :caption: 自然语言处理
    :hidden:
 
+   nlp/sentiment_analysis
    nlp/bert_poetry
 
 .. toctree::
