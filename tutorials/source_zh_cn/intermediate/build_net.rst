@@ -8,6 +8,7 @@
   build_net/parameter
   build_net/customized_model
   build_net/loss
+  build_net/optim
   build_net/customized_metric
   build_net/model_use_guide
   build_net/load_save_model
