@@ -264,11 +264,11 @@ Tensor(shape=[2, 2], dtype=Int32, value=
 
 ### 同步Dump功能使用方法
 
-同步Dump功能使用参考[同步Dump操作步骤](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/dump_in_graph_mode.html#id6)。
+同步Dump功能使用参考[同步Dump操作步骤](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/dump_in_graph_mode.html#同步dump)。
 
 ### 异步Dump功能使用方法
 
-异步Dump功能使用参考[异步Dump操作步骤](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/dump_in_graph_mode.html#id11)。
+异步Dump功能使用参考[异步Dump操作步骤](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/dump_in_graph_mode.html#异步dump)。
 
 ## Running Data Recorder
 
@@ -318,6 +318,10 @@ Running Data Recorder(RDR)是MindSpore提供训练程序运行时记录数据的
 
 这时我们到RDR文件的导出目录中，可以看到有几个文件，每一个文件都代表着一种数据。比如 `hwopt_d_before_graph_0.ir` 该文件为计算图文件。可以使用文本工具打开该文件，用以查看计算图，分析计算图是否符合预期。
 
+#### 诊断处理
+
+当开启RDR并设置环境变量`export MS_RDR_MODE=2`，进入诊断模式。在图编译结束后，我们同样可以在RDR文件的导出目录中看到保存的与异常处理相同的文件。
+
 ## 内存复用
 
 内存复用功能(Mem Reuse)是让不同的Tensor共用同样的一部分内存，以降低内存开销，支撑更大的网络，关闭后每个Tensor有自己独立的内存空间，Tensor间无共享内存。
@@ -365,9 +369,10 @@ MindSpore采用glog来输出日志，常用的几个环境变量如下：
     C++和Python的日志会被输出到不同的文件中，C++日志的文件名遵从`GLOG`日志文件的命名规则，这里是`mindspore.机器名.用户名.log.日志级别.时间戳.进程ID`，Python日志的文件名为`mindspore.log.进程ID`。  
     `GLOG_log_dir`只能包含大小写字母、数字、"-"、"_"、"/"等字符。
 
-- `GLOG_log_max`
+- `GLOG_stderrthreshold`
 
-    单个日志文件的默认最大为50MB，可以通过该环境变量更改日志文件默认的最大值。如果当前写入的日志文件超过最大值，则新输出的日志内容会写入到新的日志文件中。
+    日志模块在将日志输出到文件的同时也会将日志打印到屏幕，该环境变量用于控制此种场景下打印到屏幕的日志级别。
+    该环境变量默认值为2，即WARNING级别，对应关系如下：0-DEBUG、1-INFO、2-WARNING、3-ERROR、4-CRITICAL。
 
 - `MS_SUBMODULE_LOG_v`
 
@@ -375,11 +380,6 @@ MindSpore采用glog来输出日志，常用的几个环境变量如下：
     该环境变量赋值方式为：`MS_SUBMODULE_LOG_v="{SubModule1:LogLevel1,SubModule2:LogLevel2,...}"`。  
     其中被指定子模块的日志级别将覆盖`GLOG_v`在此模块内的设置，此处子模块的日志级别`LogLevel`与`GLOG_v`的日志级别含义相同，MindSpore子模块的划分如下表。  
     例如可以通过`GLOG_v=1 MS_SUBMODULE_LOG_v="{PARSER:2,ANALYZER:2}"`把`PARSER`和`ANALYZER`模块的日志级别设为WARNING，其他模块的日志级别设为INFO。
-
-- `GLOG_stderrthreshold`
-
-    日志模块在将日志输出到文件的同时也会将日志打印到屏幕，该环境变量用于控制此种场景下打印到屏幕的日志级别。
-    该环境变量默认值为2，即WARNING级别，对应关系如下：0-DEBUG、1-INFO、2-WARNING、3-ERROR、4-CRITICAL。
 
 MindSpore子模块按照目录划分如下：
 
@@ -409,5 +409,17 @@ MindSpore子模块按照目录划分如下：
 | mindspore/ccsrc                              | ME              |
 | mindspore/core/gvar                          | COMMON          |
 | mindspore/core/                              | CORE            |
+
+- `GLOG_log_max`
+
+    用于控制MindSpore C++模块日志单文件大小，默认最大为50MB，可以通过该环境变量更改日志文件默认的最大值。如果当前写入的日志文件超过最大值，则新输出的日志内容会写入到新的日志文件中。
+
+- `logger_maxBytes`
+
+    用于控制MindSpore Python模块日志单文件大小，默认是52428800 bytes。
+
+- `logger_backupCount`
+
+    用于控制MindSpore Python模块日志文件数量，默认是30个。
 
 > glog不支持日志文件的绕接，如果需要控制日志文件对磁盘空间的占用，可选用操作系统提供的日志文件管理工具，例如：Linux的logrotate。  
