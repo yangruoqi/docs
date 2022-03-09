@@ -2,9 +2,17 @@
 
 `Ascend` `推理应用`
 
-<a href="https://gitee.com/mindspore/docs/blob/master/tutorials/source_zh_cn/model_infer/multi_platform_inference_ascend_310_air.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/master/docs/mindspore/programming_guide/source_zh_cn/multi_platform_inference_ascend_310_air.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 ## 概述
+
+Ascend 310 AI处理器上推理
+
+Ascend 310是面向边缘场景的高能效高集成度AI处理器，支持对MindIR格式和AIR格式模型进行推理。
+
+MindIR格式可由MindSpore CPU、GPU、Ascend 910导出，可运行在GPU、Ascend 910、Ascend 310上，推理前不需要手动执行模型转换，推理时需要安装MindSpore，调用MindSpore C++ API进行推理。
+
+AIR格式仅MindSpore Ascend 910可导出，仅Ascend 310可推理，推理前需使用Ascend CANN中atc工具进行模型转换，推理时不依赖MindSpore，仅需Ascend CANN软件包。
 
 Ascend 310是面向边缘场景的高能效高集成度AI处理器。Atlas 200开发者套件又称Atlas 200 Developer Kit（以下简称Atlas 200 DK），是以Atlas 200 AI加速模块为核心的开发者板形态的终端类产品，集成了海思Ascend 310 AI处理器，可以实现图像、视频等多种数据分析与推理计算，可广泛用于智能监控、机器人、无人机、视频服务器等场景。
 

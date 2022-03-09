@@ -28,14 +28,11 @@ MindSpore教程
    :caption: 进阶
    :hidden:
 
-   intermediate/linear_fitting
-   intermediate/dataset
-   intermediate/network
-   intermediate/pynative_mode_and_graph_mode
-   intermediate/callback
-   intermediate/control_flow
-   intermediate/operation_overload
-   intermediate/derivation
+   advance/linear_fitting
+   advance/dataset
+   advance/network
+   advance/callback
+   advance/pynative_mode_and_graph_mode
 
 .. toctree::
    :glob:
@@ -63,10 +60,24 @@ MindSpore教程
    :caption: 数据引擎
    :hidden:
 
+   data_engine/introduction
    data_engine/eager
    data_engine/auto_augmentation
    data_engine/cache
    data_engine/optimize_data_processing
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 算子执行
+   :hidden:
+
+  operation/op_classification
+  operation/op_overload
+  operation/op_cpu
+  operation/op_gpu
+  operation/op_ascend
+  operation/op_custom
 
 .. toctree::
    :glob:
@@ -93,13 +104,13 @@ MindSpore教程
    :caption: 分布式并行
    :hidden:
 
-   distributed_parallel/distributed_parallel_architecture
-   distributed_parallel/parallel_strategy
-   distributed_parallel/apply_adaptive_summation
-   distributed_parallel/distributed_inference
-   distributed_parallel/communication_primitive
-   distributed_parallel/distributed_training_transformer
-   distributed_parallel/pangu_alpha
+   parallel/parallel_architecture
+   parallel/parallel_strategy
+   parallel/apply_adaptive_summation
+   parallel/distributed_inference
+   parallel/communication_primitive
+   parallel/distributed_training_transformer
+   parallel/pangu_alpha
 
 .. toctree::
    :glob:
@@ -107,11 +118,11 @@ MindSpore教程
    :caption: 调试调优
    :hidden:
 
-   debugging_tuning/read_ir_files
-   debugging_tuning/debug_in_pynative_mode
-   debugging_tuning/dump_in_graph_mode
-   debugging_tuning/incremental_operator_build
-   debugging_tuning/custom_debugging_info
+   debug/read_ir_files
+   debug/debug_in_pynative_mode
+   debug/dump_in_graph_mode
+   debug/incremental_operator_build
+   debug/custom_debugging_info
 
 .. toctree::
    :glob:
@@ -119,13 +130,14 @@ MindSpore教程
    :caption: 其他特性
    :hidden:
 
-   other_feature/second_order_optimizer
-   other_feature/apply_quantization_aware_training
-   other_feature/enable_mixed_precision
-   other_feature/apply_gradient_accumulation
-   other_feature/apply_host_device_training
-   other_feature/numpy
-   other_feature/custom_operator
+   others/second_order_optimizer
+   others/apply_quantization_aware_training
+   others/enable_mixed_precision
+   others/apply_gradient_accumulation
+   others/apply_host_device_training
+   others/numpy
+   others/custom_operator
+   others/lossscale
 
 
 .. raw:: html
@@ -255,7 +267,7 @@ MindSpore教程
 				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
-                     <a href="./distributed_parallel/distributed_parallel_architecture.html" class="article-link">
+                     <a href="./parallel/parallel_architecture.html" class="article-link">
                         <div>
                            <div class="doc-article-head">
                               <span class="doc-head-content">分布式并行</span>
@@ -273,7 +285,7 @@ MindSpore教程
             <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
-                     <a href="./debugging_tuning/read_ir_files.html" class="article-link">
+                     <a href="./debug/read_ir_files.html" class="article-link">
                         <div>
                            <div class="doc-article-head">
                               <span class="doc-head-content">调试调优</span>
