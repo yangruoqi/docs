@@ -30,12 +30,12 @@ MindSpore教程
 
    intermediate/linear_fitting
    intermediate/dataset
-   intermediate/build_net
+   intermediate/network
    intermediate/pynative_mode_and_graph_mode
    intermediate/callback
    intermediate/control_flow
-   intermediate/hypermap
-   intermediate/grad_operation
+   intermediate/operation_overload
+   intermediate/derivation
 
 .. toctree::
    :glob:
