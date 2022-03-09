@@ -43,7 +43,7 @@
 
 ## 开启优化器并行
 
-在`mindspore.context.set_auto_parallel_context`中提供了`enable_parallel_optimizer`选项，将其配置为True后，即可使能优化器并行，默认对所有参数进行优化器切分。
+在`mindspore.context.set_auto_parallel_context`中提供了`enable_parallel_optimizer`选项，将其配置为True后，即可使能优化器并行，默认对所有**占用内存小于64KB**的参数进行优化器切分。
 
 ```python
 from mindspore import context
@@ -59,65 +59,102 @@ import numpy as np
 from mindspore import Parameter, Tensor
 param = Parameter(Tensor(np.ones((10, 2))), name='weight1', parallel_optimizer=True)
 
-# 或者通过下述的方式配置
+# Another way to set the parallel_optimizer attribute
 param2 = Parameter(Tensor(np.ones((10, 2))), name='weight2')
 param2.parallel_optimizer = False
 ```
+
+优化器并行特性还提供了配置字典`parallel_optimizer_config`。通过在context中配置不同的键值，可以达到不同的效果：
+
+- `gradient_accumulation_shard(bool)`：如果为True，则累积梯度变量将在数据并行度上进行分片。在累积梯度时，每个累积迭代中将会引入额外的通信(ReduceScatter)以保证计算的一致性，但节省了大量的计算设备内存(例如GPU显存)，因此可以使模型以更大的批量进行训练。仅当模型在流水线并行训练或梯度累积中设置此配置，并且具有数据并行维度时，此配置才会有效。默认值为True。
+
+    ```python
+    from mindspore import context
+    context.set_auto_parallel_context(parallel_optimizer_config={"gradient_accumulation_shard": True}, enable_parallel_optimizer=True)
+    ```
+
+- `parallel_optimizer_threshold(int)`：该值表示切分参数时，要求目标参数所占内存的最小值。当目标参数小于该值时，将不会被切分。
+
+    ```python
+    import numpy as np
+    from mindspore import Parameter, Tensor, context, dtype
+    param = Parameter(Tensor(np.ones((10, 2)), dtype=dtype.float32), name='weight1')
+    # float32类型占用内存4Bytes:
+    # param_size = np.prod(list(param.shape)) * 4 = (10 * 2) * 4 = 80B < 24KB, 不会被切分
+    context.set_auto_parallel_context(parallel_optimizer_config={"parallel_optimizer_threshold": 24})
+    ```
 
 ## 配置通信融合
 
 在设置参数优化器并行一节中，我们阐述了如何配置每个参数的优化器并行属性。在全/半自动模式下，每个参数都会产生一个对应的AllGather操作和ReduceScatter操作。这些通信算子是自动并行框架自动插入的。然而，随着参数量增多，对应的通信算子也会增多，通信操作产生的算子调度和启动都会产生更多的开销。因此，可以通过`cell`提供的`set_comm_fusion`方法，对每个`cell`内的参数对应的AllGather和ReduceScatter操作配置融合标记。
 
-`Transformer`接口提供了`lambda_func`参数来自定义每层的分组融合标记。如下代码所示，通过此接口将Transformer中每一层的参数配置了fusion值，融合的通信算子个数设置为2个。
+如下述的代码所示，针对实例化后的DenseLayer，调用`set_comm_fusion`方法，为每一层设置fusion值。
 
 ```python
 """Parallel Optimizer Fusion Example"""
 from mindspore.communication import init
+from mindspore import nn
 from mindspore import context, ParallelMode
-from mindspore.nn.transformer import Transformer, TransformerOpParallelConfig
-
 init()
 context.set_auto_parallel_context(parallel_mode=ParallelMode.SEMI_AUTO_PARALLEL, enable_parallel_optimizer=True)
-def set_parallel_configure_for_layer(network, layer_id, offset, parallel_config, layers):
 
-    # 将transformer的融合层数设置为4个
-    gradient_aggregation_group = 4
-    dis = max(int((layers + offset) / gradient_aggregation_group), 1)
-    # 此处的network是一个cell，用户可以针对自己的网络层调用set_comm_fusion方法
-    network.set_comm_fusion(int((layer_id + offset) / dis) + 1)
+class DenseLayer(nn.Cell):
+    """A base layer with two dense layer"""
+    def __init__(self):
+        super().__init__()
+        self.input_mapping = nn.Dense(10, 10)
+        self.output_mapping = nn.Dense(10, 10)
+    def construct(self, x):
+        x = self.input_mapping(x)
+        return self.output_mapping(x)
 
-model_parallel_config = TransformerOpParallelConfig()
-net = Transformer(encoder_layers=1, decoder_layers=1,
-                  batch_size=4, src_seq_length=10,
-                  tgt_seq_length=10, hidden_size=24,
-                  num_heads=8, attention_dropout_rate=0.0,
-                  hidden_dropout_rate=0.0, lambda_func=set_parallel_configure_for_layer,
-                  ffn_hidden_size=24, parallel_config=model_parallel_config)
+class Net(nn.Cell):
+    """An network with many dense layers"""
+    def __init__(self):
+        super().__init__()
+        self.layer1 = DenseLayer()
+        self.layer2 = DenseLayer()
+        self.layer3 = DenseLayer()
+        self.layer1.set_comm_fusion(0)
+        self.layer2.set_comm_fusion(1)
+        self.layer3.set_comm_fusion(2)
+    def construct(self, x):
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        return x
+
+net = Net()
 for item in net.trainable_params():
-    if 'dense1' in item.name:
-        print(f"The parameter {item.name}'s fusion id is {item.comm_fusion}")
+    print(f"The parameter {item.name}'s fusion id is {item.comm_fusion}")
 ```
 
 对应的输出如下，表示了每层特定dense的funsion值：
 
 ```text
-The parameter encoder.blocks.0.attention.dense1.weight's fusion id is 1
-The parameter encoder.blocks.0.attention.dense1.bias's fusion id is 1
-The parameter decoder.blocks.0.attention.dense1.weight's fusion id is 2
-The parameter decoder.blocks.0.attention.dense1.bias's fusion id is 2
-The parameter decoder.blocks.0.cross_attention.dense1.weight's fusion id is 2
-The parameter decoder.blocks.0.cross_attention.dense1.bias's fusion id is 2
+The parameter layer1.input_mapping.weight's fusion id is 0
+The parameter layer1.input_mapping.bias's fusion id is 0
+The parameter layer1.output_mapping.weight's fusion id is 0
+The parameter layer1.output_mapping.bias's fusion id is 0
+The parameter layer2.input_mapping.weight's fusion id is 1
+The parameter layer2.input_mapping.bias's fusion id is 1
+The parameter layer2.output_mapping.weight's fusion id is 1
+The parameter layer2.output_mapping.bias's fusion id is 1
+The parameter layer3.input_mapping.weight's fusion id is 2
+The parameter layer3.input_mapping.bias's fusion id is 2
+The parameter layer3.output_mapping.weight's fusion id is 2
+The parameter layer3.output_mapping.bias's fusion id is 2
 ```
 
 >在编译图的流程中，相同融合标记并且是相同的通信操作，会被融合成一个通信操作。从而减少通信操作的数量。对于融合标记为0的通信算子时，优化流程中不会对它们进行融合。
 
 开启优化器切分时，网络中每个参数都会产生一个相应的通信算子，然而频繁地调用通信算子将造成较多的算子启动消耗。将这些通信算子融合成一个通信算子，是最有效减少通信算子个数的办法。MindSpore提供了但这样会导致计算资源的浪费。例如，将所有的通信算子融合成一个算子后，在当前训练迭代中，NPU需要等待切分的参数汇聚完成后才能进行网络的前向计算。这样会造成设备的等待。
 
-为了避免上述问题，可以将网络参数进行分组融合：在上一组参数进行的计算的同时，进行下组参数的通信，使得计算和通信能够互相隐藏。这就是上述代码将通信算子个数融合成2个而不是1个的原因。
+为了避免上述问题，可以将网络参数进行分组融合：在上一组参数进行的计算的同时，进行下组参数的通信，使得计算和通信能够互相隐藏。这就是上述代码将`layer2`和`layer3`设置不同fusion值的原因。
 
 ## 运行代码
 
-上述代码需要在配置分布式变量后才可以运行。Ascend环境需要配置RANK_TABLE_FILE、RANK_ID和DEVICE_ID。配置的过程请参考[此处](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/distributed_training_ascend.html#id4)，GPU环境需要配置[OpenMPI](https://www.mindspore.cn/tutorials/zh-CN/master/intermediate/distributed_training/distributed_training_gpu.html?highlight=openmpi)、NCCL和[HOST_FILE](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/distributed_training_gpu.html#id14)，配置的过程请参考[此处](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/distributed_training_gpu.html#id3)。
+上述代码需要在配置分布式变量后才可以运行。Ascend环境需要配置RANK_TABLE_FILE、RANK_ID和DEVICE_ID。配置的过程请参考[此处](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/distributed_training_ascend.html#配置分布式环境变量)，GPU环境需要配置[OpenMPI](https://www.mindspore.cn/tutorials/zh-CN/master/intermediate/distributed_training/distributed_training_gpu.html?highlight=openmpi)、NCCL和[HOST_FILE](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/distributed_training_gpu.html#多机多卡训练)，配置的过程请参考[此处](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/distributed_training_gpu.html#配置分布式环境)。
 
 Ascend分布式相关的环境变量有:
 

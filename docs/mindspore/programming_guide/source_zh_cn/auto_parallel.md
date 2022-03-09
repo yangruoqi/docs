@@ -25,6 +25,8 @@ MindSpore的分布式并行配置通过`auto_parallel_context`来进行集中管
 
 `device_num`表示可用的机器数，其值为int型，默认值是0，且必须在1~4096范围内。若用户不配置，`Model`接口内部则会通过`get_group_size`方法获取，若用户进行了配置，则遵循用户的配置。这个配置可以在用户不使用`Model`接口的情况下，手动传递`device_num`。
 
+> 在semi_auto_parallel/auto_parallel模式下，device_num只能为1、2、4，或者8的倍数。
+
 代码样例如下：
 
 ```python
@@ -157,25 +159,35 @@ context.get_auto_parallel_context("parameter_broadcast")
 
 #### comm_fusion
 
-`comm_fusion`通过设置通信算子的融合配置，实现不同通信算子的融合功能，当前仅支持`allreduce`通信算子的配置。对于`allreduce`通信算子的配置，共支持三种不同的`mode`：
+`comm_fusion`通过设置通信算子的融合配置，实现不同通信算子的融合功能，当前支持`allreduce`、`allgather`、`reducescatter`通信算子的配置。
+对于`allreduce`通信算子的配置，共支持三种不同的`mode`：
 
 - `auto`：自动进行`allreduce`通信算子融合，按照梯度数据量阈值64MB进行算子融合，配置参数`config`为`None`。
 - `size`：按照手动设置梯度量阈值的方式进行`allreduce`通信算子融合，配置参数`config`类型为`int`，单位`MB`。
 - `index`：按照通信算子序列号进行融合的方式，与`all_reduce_fusion_config`功能相同，配置参数`config`类型为`list(int)`。
+
+对于`allgather`和`reducescatter`通信算子的配置，支持两种不同的`mode`：
+
+- `auto`：自动进行对应的通信算子融合，按照梯度数据量阈值64MB进行算子融合，配置参数`config`为`None`。
+- `size`：按照手动设置梯度量阈值的方式进行对应的通信算子融合，配置参数`config`类型为`int`，单位`MB`。
 
 代码样例如下：
 
 ```python
 from mindspore import context
 
-# auto
+# allreduce auto
 context.set_auto_parallel_context(comm_fusion={"allreduce": {"mode": "auto", "config": None}})
 
-# size
+# allreduce size
 context.set_auto_parallel_context(comm_fusion={"allreduce": {"mode": "size", "config": 32}})
 
-# index
+# allreduce index
 context.set_auto_parallel_context(comm_fusion={"allreduce": {"mode": "index", "config": [20, 35]}})
+
+# allgather and reducescatter size
+context.set_auto_parallel_context(comm_fusion={"allgather": {"mode": "size", "config": 16},
+                                               "reducescatter": {"mode": "size", "config": 32}})
 ```
 
 ### 自动并行配置
@@ -197,7 +209,7 @@ context.get_auto_parallel_context("gradient_fp32_sync")
 
 `auto_parallel_search_mode`字段现已替换为`search_mode`，`auto_parallel_search_mode`将会在未来版本中删除。该字段用于指示并行策略搜索使用的算法。当前，MindSpore提供了`dynamic_programming`，`recursive_programming`和`sharding_propagation`三种搜索策略的算法用于搜索算子级并行策略，默认是`dynamic_programming`。
 
-`dynamic_programming`能够搜索出代价模型刻画的最优策略，但在搜索巨大网络模型的并行策略时耗时较长；而`recursive_programming`能瞬间搜索出并行策略，同时在已验证的常用网络中搜索出来的策略是最优策略，但在未经验证的某些特殊网络中可能找到次优策略。`sharding_propagation`要求用户配置一些算子的并行策略，并以此为基础向整个网络传播。在传播时，算法会尽量选取引发张量[重排布](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/design/distributed_training_design.html#id10)通信最少的策略。MindSpore提供了参数，让用户自由选择搜索算法。
+`dynamic_programming`能够搜索出代价模型刻画的最优策略，但在搜索巨大网络模型的并行策略时耗时较长；而`recursive_programming`能瞬间搜索出并行策略，同时在已验证的常用网络中搜索出来的策略是最优策略，但在未经验证的某些特殊网络中可能找到次优策略。`sharding_propagation`要求用户配置一些算子的并行策略，并以此为基础向整个网络传播。在传播时，算法会尽量选取引发张量[重排布](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/design/distributed_training_design.html#自动并行原理)通信最少的策略。MindSpore提供了参数，让用户自由选择搜索算法。
 
 代码样例如下：
 
@@ -263,11 +275,38 @@ context.get_auto_parallel_context("pipeline_stages")
 `parallel_optimizer_config`是一个字典。当启用优化器并行时，该配置提供了有关优化器并行训练的优化选项。
 当我们设置context.set_auto_parallel_context(enable_parallel_optimizer=True)时，`parallel_optimizer_config`配置才会生效。它目前支持如下键值。
 
-- gradient_accumulation_shard:如果为True，则累积梯度变量将在数据并行度上进行分片。在累积梯度时，每个累积迭代中将会引入额外的通信(ReduceScatter)以保证计算的一致性，但节省了大量的计算设备内存(例如GPU显存)，因此可以使模型以更大的批量进行训练。仅当模型在流水线并行训练或梯度累积中设置此配置，并且具有数据并行维度时，此配置才会有效。默认值为True。
+- `gradient_accumulation_shard(bool)`：如果为True，则累积梯度变量将在数据并行度上进行分片。在累积梯度时，每个累积迭代中将会引入额外的通信(ReduceScatter)以保证计算的一致性，但节省了大量的计算设备内存(例如GPU显存)，因此可以使模型以更大的批量进行训练。仅当模型在流水线并行训练或梯度累积中设置此配置，并且具有数据并行维度时，此配置才会有效。默认值为True。
+
+    ```python
+    from mindspore import context
+    context.set_auto_parallel_context(parallel_optimizer_config={"gradient_accumulation_shard": True}, enable_parallel_optimizer=True)
+    ```
+
+- `parallel_optimizer_threshold(int)`：该值表示切分参数时，要求目标参数所占内存的最小值。当目标参数小于该值时，将不会被切分。
+
+    ```python
+    import numpy as np
+    from mindspore import Parameter, Tensor, context, dtype
+    param = Parameter(Tensor(np.ones((10, 2)), dtype=dtype.float32), name='weight1')
+    # float32类型占用内存4Bytes:
+    # param_size = np.prod(list(param.shape)) * 4 = (10 * 2) * 4 = 80B < 24KB, 不会被切分
+    context.set_auto_parallel_context(parallel_optimizer_config={"parallel_optimizer_threshold": 24})
+    ```
+
+#### dataset_strategy
+
+在semi_auto_parallel/auto_parallel模式的分布式训练场景下，针对数据集的导入方式有着丰富的切分策略，如数据并行导入、全量导入以及更自由的混合并行导入，可以通过`dataset_strategy`进行配置。
+
+代码样例如下：
 
 ```python
 from mindspore import context
-context.set_auto_parallel_context(parallel_optimizer_config={"gradient_accumulation_shard": True}, enable_parallel_optimizer=True)
+# 设置输入在第1维度上进行切分， 此时要求用户确保dataset返回的输入在第1维度上进行切分
+context.set_auto_parallel_context(dataset_strategy=((1, 8), (1, 8)))
+# 数据集以数据并行导入每一卡
+context.set_auto_parallel_context(dataset_strategy="data_parallel")
+# 数据集以全量导入每一卡
+context.set_auto_parallel_context(dataset_strategy="full_batch")
 ```
 
 ## 分布式通信接口

@@ -6,11 +6,11 @@
 
 ## 概述
 
-在图模式`context.set_context(mode=context.GRAPH_MODE)`下运行用MindSpore编写的模型时，若配置中设置了`context.set_context(save_graphs=True)`，运行时会输出一些图编译过程中生成的一些中间文件，我们称为IR文件。当前主要有三种格式的IR文件：
+在图模式`context.set_context(mode=context.GRAPH_MODE)`下运行用MindSpore编写的模型时，若配置中设置了`context.set_context(save_graphs=True)`，运行时会输出一些图编译过程中生成的中间文件，我们称为IR文件。当前主要有三种格式的IR文件：
 
 - ir后缀结尾的IR文件：一种比较直观易懂的以文本格式描述模型结构的文件，可以直接用文本编辑软件查看。
 - dat后缀结尾的IR文件：一种相对于ir后缀结尾的文件格式定义更为严谨的描述模型结构的文件，包含的内容更为丰富，可以直接用文本编辑软件查看。
-- dot后缀结尾的IR文件：描述了不同节点间的拓扑关系，可以用[graphviz](http://graphviz.org)将此文件作为输入生成图片，方便用户直观地查看模型结构。对于算子比较多的模型，推荐使用可视化组件[MindInsight](https://www.mindspore.cn/mindinsight/docs/zh-CN/master/dashboard.html#id5)对计算图进行可视化。
+- dot后缀结尾的IR文件：描述了不同节点间的拓扑关系，可以用[graphviz](http://graphviz.org)将此文件作为输入生成图片，方便用户直观地查看模型结构。对于算子比较多的模型，推荐使用可视化组件[MindInsight](https://www.mindspore.cn/mindinsight/docs/zh-CN/master/dashboard.html#计算图可视化)对计算图进行可视化。
 
 ## 如何保存IR
 
@@ -164,7 +164,7 @@ print(out)
 第8行告诉我们该网络解析出来的图的数量，该IR文件展示了三张图的信息。 分别为第42行的入口图`1_construct_wrapper.21`；第32行的图`3_func.23`，对应着网络中定义的函数`func(x, y)`；第12行的图`2_construct.22`，即对应`construct`函数。
 对于具体的图来说（此处我们以图`2_construct.22`为例），第10-28行展示了图结构的信息，图中含有若干个节点，即`CNode`。该图包含`Sub`、`Add`、`Mul`这些已经在`__init___`函数中定义过的算子。另外还有一处（第19行）以`call @3_func.23`的形式，调用了图`3_func.23`，对应脚本中调用函数`func`执行两数相除的行为。
 
-`CNode`（[ANF-IR的设计请查看](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/design/mindir.html#id2)）的信息遵循如下格式，从左到右分别为序号、节点名称-debug_name、算子名称-op_name、输入节点-arg、节点的属性-primitive_attrs、输入和输出的规格、源码解析调用栈等信息。
+`CNode`（[ANF-IR的设计请查看](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/design/mindir.html#文法定义)）的信息遵循如下格式，从左到右分别为序号、节点名称-debug_name、算子名称-op_name、输入节点-arg、节点的属性-primitive_attrs、输入和输出的规格、源码解析调用栈等信息。
 由于ANF图为单向无环图，所以此处仅根据输入关系来体现节点与节点的连接关系。关联代码行则体现了`CNode`与脚本源码之间的关系，例如第15行表明该节点是由脚本中`a = self.sub(x, 1)`这一行解析而来。
 
 ```text
@@ -257,12 +257,26 @@ print(out)
 第34-39表示图中计算节点的执行序，与代码执行的先后顺序对应。格式为：`序号: 所属图名称:节点名称{[0]: 第一个输入的信息, [1]: 第二个输入的信息, ...}`。 对于`CNode`而言，第一个输入表示该节点承载的计算方式。
 第58行表示图的数量，此处为3。
 
-`CNode`（[ANF-IR的设计请查看](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/design/mindir.html#id2)）的信息遵循如下格式，从左到右分别为序号、输出规格、算子名称-op_name、节点的属性-attr、输入节点-arg、输入节点的规格、所在的命名空间、关联代码行等信息。
+`CNode`（[ANF-IR的设计请查看](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/design/mindir.html#文法定义)）的信息遵循如下格式，从左到右分别为序号、输出规格、算子名称-op_name、节点的属性-attr、输入节点-arg、输入节点的规格、所在的命名空间、关联代码行等信息。
 
 ```text
 %[序号] : [输出规格] = [op_name]{[prim_type]}[attr0, attr1, ...](arg0, arg1, ...)    #(输入参数规格)#[命名空间]
   # 关联代码行/#debug_name
 ```
+
+### dot文件介绍
+
+可以用[graphviz](http://graphviz.org)将`dot`格式的IR文件作为输入生成图片。例如，在Linux操作系统下，可以通过以下命令转换成一张PNG图片。
+
+```shell
+dot -Tpng -o 04_abstract_specialize_0014.png 04_abstract_specialize_0014.dot
+```
+
+转换后的图片如下所示，我们可以直观地查看模型结构。不同的黑框区分了不同的子图，图与图之间的蓝色箭头表示相互之间的调用。蓝色区域表示参数，矩形表示图的参数列表，六边形和黑色箭头表示该参数作为CNode的输入参与计算过程。黄色矩形表示CNode节点，从图中可以看出，CNode输入从下标0开始，第0个输入（即紫色或绿色区域）表示该算子将要进行怎样的计算，通过虚箭头连接。类型一般为算子原语，也可以是另一张图。下标1之后的输入则为计算所需要的参数。
+
+![04_abstract_specialize_0014.png](./images/dot_to_png.png)
+
+对于算子比较多的模型，图片会过于庞大，推荐使用可视化组件[MindInsight](https://www.mindspore.cn/mindinsight/docs/zh-CN/master/dashboard.html#计算图可视化)对计算图进行可视化。
 
 ## 如何根据analyze_fail.dat文件分析图推导失败的原因
 
