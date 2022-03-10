@@ -42,7 +42,7 @@ MindSpore教程
 
    cv/cv_resnet50
    cv/transfer_learning
-   cv/adversarial_example_generation
+   cv/fgsm
    cv/dcgan
 
 .. toctree::
