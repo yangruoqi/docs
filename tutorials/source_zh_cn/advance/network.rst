@@ -13,7 +13,7 @@
   network/custom_metric
   network/custom_train_and_eval_net
   network/model_use_guide
-  network/load_save_model
+  network/save_model
   network/derivation
   network/control_flow
 
