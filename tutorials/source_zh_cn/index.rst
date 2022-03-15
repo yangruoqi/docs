@@ -52,7 +52,7 @@ MindSpore教程
    :hidden:
 
    nlp/sentiment_analysis
-   nlp/bert_poetry
+   nlp/sequence_labeling
 
 .. toctree::
    :glob:
