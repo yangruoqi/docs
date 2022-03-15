@@ -15,7 +15,7 @@ MindSpore提供了一种自动数据调优的工具——Dataset AutoTune，用�
 
 ![autotune](./images/autotune.png)
 
-使能AutoTune后，MindSpore会根据一定的时间间隔，对数据处理管道的资源情况进行采样统计。
+启动AutoTune后，MindSpore会根据一定的时间间隔，对数据处理管道的资源情况进行采样统计。
 
 当Dataset AutoTune收集到足够的信息时，它会基于这些信息分析当前的性能瓶颈是否在数据侧。
 如果是，Dataset AutoTune将调整数据处理管道的并行度，并加速数据集管道的运算。
@@ -23,36 +23,45 @@ MindSpore提供了一种自动数据调优的工具——Dataset AutoTune，用�
 
 > 自动数据加速在默认情况下是关闭的。
 
-## 如何使能自动数据加速
+## 如何启动自动数据加速
 
-使能自动数据加速:
+启动自动数据加速（不保存调优后的推荐配置）:
 
 ```python
 import mindspore.dataset as ds
 ds.config.set_enable_autotune(True)
 ```
 
-## 如何调整自动数据加速的采样间隔
+启动自动数据加速并设定调优结果的保存路径:
 
-调整自动数据加速的采样时间间隔（单位是毫秒）:
+```python
+import mindspore.dataset as ds
+ds.config.set_enable_autotune(True, "/path/to/autotune_out.json")
+```
+
+## 如何自定义自动数据加速的调优间隔
+
+设定自动数据加速的调优间隔（单位是step，与网络训练时step的含义一致）：
 
 ```python
 import mindspore.dataset as ds
 ds.config.set_autotune_interval(100)
 ```
 
-获取当前设定的采样时间间隔（单位是毫秒）:
+> 特别的，当调优间隔设定为0时，表示每个epoch结束时进行调优（与网络训练时epoch的含义一致）。
+
+获取当前自动数据加速的调优间隔:
 
 ```python
 import mindspore.dataset as ds
-print("time interval:", ds.config.get_autotune_interval())
+print("tuning interval:", ds.config.get_autotune_interval())
 ```
 
 ## 约束
 
-- 自动数据加速目前仅可用于下沉模式（dataset_sink_mode=True），在非下沉模式（dataset_sink_mode=False）下，Dataset AutoTune将不会生效，但不会影响网络正常训练。
-
 - Profiling性能分析和自动数据加速无法同时开启，否则会导致Profiling或Dataset AutoTune不生效。如果这样同时开启此两个功能，则会有一条警告信息提示用户检查是否为误操作。因此在使用Dataset AutoTune时，用户需要确保关闭Profiling功能。
+- 如果同时启动了[数据异构加速](https://www.mindspore.cn/docs/programming_guide/zh-CN/master/enable_dataset_offload.html)和自动数据加速，当有数据节点通过异构加速分配至计算网络中时，自动数据加速将不能保存数据管道配置并以警告日志提醒，因为此时实际运行的数据管道并不是预先定义的数据管道。
+- 如果数据处理管道包含不支持反序列化的节点（如GeneratorDataset），则当自动数据加速生成调优配置文件后，再使用调优配置文件进行反序列化时将产生错误。此时推荐用户根据调优配置文件的内容手动修改数据管道的配置已达到加速的目的。
 
 ## 样例
 
@@ -70,7 +79,7 @@ def create_dataset(...)
     """
     create dataset for train or test
     """
-    # 使能自动数据加速
+    # 启动自动数据加速
     ds.config.set_enable_autotune(True)
 
     # 其他数据集代码无需变更
