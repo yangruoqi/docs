@@ -123,6 +123,7 @@ MindSpore教程
    debug/dump_in_graph_mode
    debug/incremental_operator_build
    debug/custom_debugging_info
+   debug/ms_class
 
 .. toctree::
    :glob:
