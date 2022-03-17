@@ -5,6 +5,7 @@
 # Workspace
 .idea/
 .vscode/
+.ipynb_checkpoints/
 
 # MAC
 *.DS_Store
