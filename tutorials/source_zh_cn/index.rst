@@ -31,8 +31,8 @@ MindSpore教程
    advance/linear_fitting
    advance/dataset
    advance/network
+   advance/pynative_graph
    advance/callback
-   advance/pynative_mode_and_graph_mode
 
 .. toctree::
    :glob:
