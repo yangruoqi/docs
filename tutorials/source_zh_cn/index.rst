@@ -28,11 +28,10 @@ MindSpore教程
    :caption: 进阶
    :hidden:
 
-   advance/linear_fitting
    advance/dataset
    advance/network
+   advance/train
    advance/pynative_graph
-   advance/callback
 
 .. toctree::
    :glob:
