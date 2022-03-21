@@ -4,6 +4,8 @@
 .. toctree::
   :maxdepth: 1
   
+  distributed_advanced_overview
+  apply_operator_parallel
   apply_pipeline_parallel
   distributed_training_parallel_opt
   distributed_training_dataset_slice
