@@ -165,10 +165,10 @@ MindSpore教程
             <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
-                     <a href="./intermediate/dataset_load_process.html" class="article-link">
+                     <a href="./advance/dataset.html" class="article-link">
                         <div>
                            <div class="doc-article-head">
-                              <span class="doc-head-content">数据处理与加载</span>
+                              <span class="doc-head-content">数据处理</span>
                            </div>
                            <div class="doc-article-desc">
                               详细描述待更新。
@@ -183,7 +183,7 @@ MindSpore教程
 				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
-                     <a href="./intermediate/build_net.html" class="article-link">
+                     <a href="./advance/network.html" class="article-link">
                         <div>
                            <div class="doc-article-head">
                               <span class="doc-head-content">网络构建</span>
@@ -199,7 +199,7 @@ MindSpore教程
             <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
-                     <a href="./intermediate/pynative_mode_and_graph_mode.html" class="article-link">
+                     <a href="./advance/pynative_graph.html" class="article-link">
                         <div>
                            <div class="doc-article-head">
                               <span class="doc-head-content">动态图与静态图</span>
@@ -218,7 +218,7 @@ MindSpore教程
 				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
-                     <a href="./data_engine/eager.html" class="article-link">
+                     <a href="./data_engine/introduction.html" class="article-link">
                         <div>
                            <div class="doc-article-head">
                               <span class="doc-head-content">数据引擎</span>
@@ -268,7 +268,7 @@ MindSpore教程
 				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
-                     <a href="./parallel/parallel_architecture.html" class="article-link">
+                     <a href="./parallel/parallel_strategy.html" class="article-link">
                         <div>
                            <div class="doc-article-head">
                               <span class="doc-head-content">分布式并行</span>
@@ -337,7 +337,7 @@ MindSpore教程
             <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
-                     <a href="./nlp/bert_poetry.html" class="article-link">
+                     <a href="./nlp/sentiment_analysis.html" class="article-link">
                         <div>
                            <div class="doc-article-head">
                               <span class="doc-head-content">自然语言处理</span>
