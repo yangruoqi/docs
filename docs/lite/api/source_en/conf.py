@@ -199,12 +199,16 @@ t.close()
 
 source_path = "../" + header_path + "/"
 source_runtime_include = os.path.join(source_path, "runtime/include")
-target_runtime_include = "../include/runtime/include"
-shutil.copytree(source_runtime_include, target_runtime_include)
+os.makedirs("../include/runtime")
+target_runtime_include = "../include/runtime"
+cpstr = "cp -rf " + source_runtime_include + " " + target_runtime_include
+os.system(cpstr)
 
 source_converter_include = os.path.join(source_path, "tools/converter/include")
-target_converter_include = "../include/converter/include"
-shutil.copytree(source_converter_include, target_converter_include)
+os.makedirs("../include/converter")
+target_converter_include = "../include/converter"
+cpstr2 = "cp -rf " + source_converter_include + " " + target_converter_include
+os.system(cpstr2)
 
 shutil.rmtree("../include/runtime/include/schema")
 shutil.rmtree("../include/runtime/include/third_party")
