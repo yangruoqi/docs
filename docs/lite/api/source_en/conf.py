@@ -190,7 +190,7 @@ if lite_package_path == "null":
     quit()
 header_path = lite_package_path.split("/")[-1].split(".tar")[0]
 save_path = "../"
-os.makedirs(save_path, exist_ok=true)
+os.makedirs(save_path, exist_ok=True)
 t = tarfile.open(lite_package_path)
 names = t.getnames()
 for name in names:
