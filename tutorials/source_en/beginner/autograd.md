@@ -1,195 +1,220 @@
 # Automatic Differentiation
 
-`Ascend` `GPU` `CPU` `Beginner` `Model Development`
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/source_en/beginner/autograd.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/tutorials-develop/resource/_static/logo_source_en.png"></a>
 
-<a href="https://gitee.com/mindspore/docs/blob/master/tutorials/source_en/beginner/autograd.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source_en.png"></a>
+Automatic differentiation is able to calculate the derivative value of a derivative function at a certain point, which is a generalization of backpropagation algorithms. The main problem solved by automatic differentiation is to decompose a complex mathematical operation into a series of simple basic operations, which shields the user from a large number of details and processes of differentiation, which greatly reduces the threshold for the use of the framework.
 
-Automatic differentiation is commonly used when implementing machine learning algorithms such as backpropagation for training neural networks. By using automatic differentiation, multi-layer composite functions could be divided into several simple computational steps, thereby helping users avoid implementing complex derivation codes. As a result, automatic differentiation enables ease of use of MindSpore.
+MindSpore uses `ops.GradOperation` to calculate a first-order derivative, and the attributes of the first-order derivative are as the following:
 
-The first-order derivative method of MindSpore is `mindspore.ops.GradOperation (get_all=False, get_by_list=False, sens_param=False)`. When `get_all` is set to `False`, the first input derivative is computed. When `get_all` is set to `True`, all input derivatives are computed. When `get_by_list` is set to `False`, weight derivatives are not computed. When `get_by_list` is set to `True`, the weight derivative is computed. `sens_param` scales the output value of the network to change the final gradient. The following uses the MatMul operator derivative for in-depth analysis.
+- `get_all`：Whether to derive the input parameters, the default value is False.
+- `get_by_list`：Whether to derive the weight parameters, the default value is False.
+- `sens_param`：Whether to scale the output value of the network to change the final gradient, the default value is False.
 
-Import the required modules and APIs:
+This chapter uses `ops.GradOperation` in MindSpore to find first-order derivatives of the function $f(x)=wx+b$.
+
+## First-order Derivative of the Input
+
+The formula needs to be defined before the input can be derived:
+$$
+f(x)=wx+b \tag {1}
+$$
+The example code below is an expression of Equation (1), and since MindSpore is functionally programmed, all expressions of computational formulas are represented as functions.
 
 ```python
 import numpy as np
 import mindspore.nn as nn
-import mindspore.ops as ops
-from mindspore import Tensor
-from mindspore import ParameterTuple, Parameter
-from mindspore import dtype as mstype
-```
+from mindspore import Parameter, Tensor
 
-## First-order Derivative of the Input
-
-To compute the input derivative, you need to define a network requiring a derivative. The following uses a network $f(x,y)=z *x* y$ formed by the MatMul operator as an example.
-
-The network structure is as follows:
-
-```python
 class Net(nn.Cell):
     def __init__(self):
         super(Net, self).__init__()
-        self.matmul = ops.MatMul()
-        self.z = Parameter(Tensor(np.array([1.0], np.float32)), name='z')
+        self.w = Parameter(np.array([6.0]), name='w')
+        self.b = Parameter(np.array([1.0]), name='b')
 
-    def construct(self, x, y):
-        x = x * self.z
-        out = self.matmul(x, y)
-        return out
+    def construct(self, x):
+        f = self.w * x + self.b
+        return f
 ```
 
-Define the network requiring the derivative. In the `__init__` function, define the `self.net` and `ops.GradOperation` networks. In the `construct` function, compute the derivative of `self.net`.
-
-The network structure is as follows:
+Define the derivative class `GradNet`. In the `__init__` function, define the `self.net` and `ops.GradOperation` networks. In the `construct` function, compute the derivative of `self.net`. Its corresponding MindSpore internally produces the following formula (2):
+$$
+f^{'}(x)=w\tag {2}
+$$
 
 ```python
-class GradNetWrtX(nn.Cell):
+from mindspore import dtype as mstype
+import mindspore.ops as ops
+
+class GradNet(nn.Cell):
     def __init__(self, net):
-        super(GradNetWrtX, self).__init__()
+        super(GradNet, self).__init__()
         self.net = net
         self.grad_op = ops.GradOperation()
 
-    def construct(self, x, y):
+    def construct(self, x):
         gradient_function = self.grad_op(self.net)
-        return gradient_function(x, y)
+        return gradient_function(x)
 ```
 
-Define the input and display the output:
+At last, define the weight parameter as w and a first-order derivative is found for the input parameter x in the input formula (1). From the running result, the input in formula (1) is 6, that is:
+$$
+f(x)=wx+b=6*x+1 \tag {3}
+$$
+ To derive the above equation, there is:
+$$
+f^{'}(x)=w=6 \tag {4}
+$$
 
 ```python
-x = Tensor([[0.8, 0.6, 0.2], [1.8, 1.3, 1.1]], dtype=mstype.float32)
-y = Tensor([[0.11, 3.3, 1.1], [1.1, 0.2, 1.4], [1.1, 2.2, 0.3]], dtype=mstype.float32)
-output = GradNetWrtX(Net())(x, y)
+x = Tensor([100], dtype=mstype.float32)
+output = GradNet(Net())(x)
+
 print(output)
 ```
 
 ```text
-    [[4.5099998 2.7       3.6000001]
-     [4.5099998 2.7       3.6000001]]
+[6.]
 ```
 
-If the derivatives of the `x` and `y` inputs are considered, you only need to set `self.grad_op = GradOperation(get_all=True)` in `GradNetWrtX`.
+MindSpore calculates the first derivative method `ops.GradOperation (get_all=False, get_by_lsit=False, sens_param=False)`, where when `get_all` is `False`, only the first input is evaluated, and when `True` is set, all inputs are evaluated.
 
 ## First-order Derivative of the Weight
 
 To compute weight derivatives, you need to set `get_by_list` in `ops.GradOperation` to `True`.
 
-The `GradNetWrtX` structure is as follows:
-
 ```python
-class GradNetWrtX(nn.Cell):
+from mindspore import ParameterTuple
+
+class GradNet(nn.Cell):
     def __init__(self, net):
-        super(GradNetWrtX, self).__init__()
+        super(GradNet, self).__init__()
         self.net = net
         self.params = ParameterTuple(net.trainable_params())
-        self.grad_op = ops.GradOperation(get_by_list=True)
+        self.grad_op = ops.GradOperation(get_by_list=True)  # Set the first-order derivative of the weight parameters
 
-    def construct(self, x, y):
+    def construct(self, x):
         gradient_function = self.grad_op(self.net, self.params)
-        return gradient_function(x, y)
+        return gradient_function(x)
 ```
 
-Run and display the output:
+Next, derive the function:
 
 ```python
-output = GradNetWrtX(Net())(x, y)
-print(output)
+# Perform a derivative calculation on the function
+x = Tensor([100], dtype=mstype.float32)
+fx = GradNet(Net())(x)
+
+# Print the results
+print(fx)
+print(f"wgrad: {fx[0]}\nbgrad: {fx[1]}")
 ```
 
 ```text
-(Tensor(shape=[1], dtype=Float32, value= [ 2.15359993e+01]),)
+(Tensor(shape=[1], dtype=Float32, value= [ 6.00000000e+00]), Tensor(shape=[1], dtype=Float32, value= [ 1.00000000e+00]))
+wgrad: [6.]
+bgrad: [1.]
 ```
 
 If computation of certain weight derivatives is not required, set `requirements_grad` to `False` when defining the network requiring derivatives.
 
 ```Python
-self.z = Parameter(Tensor(np.array([1.0], np.float32)), name='z', requires_grad=False)
+class Net(nn.Cell):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.w = Parameter(Tensor(np.array([6], np.float32)), name='w')
+        self.b = Parameter(Tensor(np.array([1.0], np.float32)), name='b', requires_grad=False)
+
+    def construct(self, x):
+        out = x * self.w + self.b
+        return out
+
+class GradNet(nn.Cell):
+    def __init__(self, net):
+        super(GradNet, self).__init__()
+        self.net = net
+        self.params = ParameterTuple(net.trainable_params())
+        self.grad_op = ops.GradOperation(get_by_list=True)
+
+    def construct(self, x):
+        gradient_function = self.grad_op(self.net, self.params)
+        return gradient_function(x)
+
+# Construct a derivative network
+x = Tensor([5], dtype=mstype.float32)
+fw = GradNet(Net())(x)
+
+print(fw)
+```
+
+```text
+(Tensor(shape=[1], dtype=Float32, value= [ 5.00000000e+00]),)
 ```
 
 ## Gradient Value Scaling
 
 You can use the `sens_param` parameter to scale the output value of the network to change the final gradient. Set `sens_param` in `ops.GradOperation` to `True` and determine the scaling index. The dimension must be the same as the output dimension.
 
-The scaling index `self.grad_wrt_output` may be in the following format:
-
 ```python
-self.grad_wrt_output = Tensor([[s1, s2, s3], [s4, s5, s6]])
-```
-
-The `GradNetWrtX` structure is as follows:
-
-```python
-class GradNetWrtX(nn.Cell):
+class GradNet(nn.Cell):
     def __init__(self, net):
-        super(GradNetWrtX, self).__init__()
+        super(GradNet, self).__init__()
         self.net = net
+        # Derivative operation
         self.grad_op = ops.GradOperation(sens_param=True)
-        self.grad_wrt_output = Tensor([[0.1, 0.6, 0.2], [0.8, 1.3, 1.1]], dtype=mstype.float32)
+        # Scale index
+        self.grad_wrt_output = Tensor([0.1], dtype=mstype.float32)
 
-    def construct(self, x, y):
+    def construct(self, x):
         gradient_function = self.grad_op(self.net)
-        return gradient_function(x, y, self.grad_wrt_output)
+        return gradient_function(x, self.grad_wrt_output)
 
-output = GradNetWrtX(Net())(x, y)  
+x = Tensor([6], dtype=mstype.float32)
+output = GradNet(Net())(x)
+
 print(output)
 ```
 
 ```text
-[[2.211 0.51  1.49 ]
- [5.588 2.68  4.07 ]]
+[0.6]
 ```
 
-## Stop Gradient
+## Stopping Gradient
 
 We can use `stop_gradient` to disable calculation of gradient for certain operators. For example:
 
 ```python
-import numpy as np
-import mindspore.nn as nn
-import mindspore.ops as ops
-from mindspore import Tensor
-from mindspore import ParameterTuple, Parameter
-from mindspore import dtype as mstype
 from mindspore.ops import stop_gradient
 
 class Net(nn.Cell):
     def __init__(self):
         super(Net, self).__init__()
-        self.matmul = ops.MatMul()
+        self.w = Parameter(Tensor(np.array([6], np.float32)), name='w')
+        self.b = Parameter(Tensor(np.array([1.0], np.float32)), name='b')
 
-    def construct(self, x, y):
-        out1 = self.matmul(x, y)
-        out2 = self.matmul(x, y)
-        out2 = stop_gradient(out2)
-        out = out1 + out2
+    def construct(self, x):
+        out = x * self.w + self.b
+        # Stops updating the gradient, and out does not contribute to gradient calculations
+        out = stop_gradient(out)
         return out
 
-class GradNetWrtX(nn.Cell):
+class GradNet(nn.Cell):
     def __init__(self, net):
-        super(GradNetWrtX, self).__init__()
+        super(GradNet, self).__init__()
         self.net = net
-        self.grad_op = ops.GradOperation()
+        self.params = ParameterTuple(net.trainable_params())
+        self.grad_op = ops.GradOperation(get_by_list=True)
 
-    def construct(self, x, y):
-        gradient_function = self.grad_op(self.net)
-        return gradient_function(x, y)
+    def construct(self, x):
+        gradient_function = self.grad_op(self.net, self.params)
+        return gradient_function(x)
 
-x = Tensor([[0.8, 0.6, 0.2], [1.8, 1.3, 1.1]], dtype=mstype.float32)
-y = Tensor([[0.11, 3.3, 1.1], [1.1, 0.2, 1.4], [1.1, 2.2, 0.3]], dtype=mstype.float32)
-output = GradNetWrtX(Net())(x, y)
-print(output)
+x = Tensor([100], dtype=mstype.float32)
+output = GradNet(Net())(x)
+
+print(f"wgrad: {output[0]}\nbgrad: {output[1]}")
 ```
 
 ```text
-    [[4.5, 2.7, 3.6],
-     [4.5, 2.7, 3.6]]
+wgrad: [0.]
+bgrad: [0.]
 ```
-
-Here, we set `stop_gradient` to `out2`, so this operator does not have any contribution to gradient. If we delete `out2 = stop_gradient(out2)`, the result is:
-
-```text
-    [[9.0, 5.4, 7.2],
-     [9.0, 5.4, 7.2]]
-```
-
-After we do not set `stop_gradient` to `out2`, it will make the same contribution to gradient as `out1`. So we can see that each result has doubled.  
