@@ -86,15 +86,23 @@ MindSpore的教程和API文档均可由[Sphinx](https://www.sphinx-doc.org/en/ma
 
 > - 构建[MindSpore教程](https://gitee.com/mindspore/docs/tree/master/tutorials)、[编程指南文档](https://gitee.com/mindspore/docs/tree/master/docs/mindspore/programming_guide)、[迁移指南文档](https://gitee.com/mindspore/docs/tree/master/docs/mindspore/migration_guide)、[深度概率编程文档](https://gitee.com/mindspore/docs/tree/master/docs/probability/docs)和[MindQuantum文档](https://gitee.com/mindspore/docs/tree/master/docs/mindquantum/docs)时还需安装[pandoc](https://pandoc.org/)，下载和安装pandoc请参考<https://pandoc.org/installing.html>。
 >
-> - 构建MindSpore和Lite的API时，由于需要使用到一些`mindspore`仓的资源文件，先克隆`mindspore`仓，并加入环境变量`MS_PATH`，构建Lite的API时还需要安装Doxygen：
+> - 构建MindSpore API时，由于需要使用到一些`mindspore`仓的资源文件，先克隆`mindspore`仓，并加入环境变量`MS_PATH`：
 >
 >   ```bash
 >   git clone https://gitee.com/mindspore/mindspore.git {MS_REPO PATH}
->   sudo apt install doxygen
 >   export MS_PATH={MS_REPO PATH}
 >   ```
 >
 >   其中`{MS_REPO PATH}`为克隆的`mindspore`仓路径。
+>
+> - 构建MindSpore Lite API时，由于需要使用到压缩包mindspore-lite-*.*-linux-x64.tar.gz里的文件，需要加入环境变量 `LITE_PACKAGE_PATH`，还需要安装Doxygen：
+>
+>   ```bash
+>   sudo apt install doxygen
+>   export LITE_PACKAGE_PATH={mindspore-lite-*.*-linux-x64.tar.gz}
+>   ```
+>
+>   其中 `LITE_PACKAGE_PATH` 为压缩包mindspore-lite-*.*-linux-x64.tar.gz的路径。
 
 ## 版权
 
