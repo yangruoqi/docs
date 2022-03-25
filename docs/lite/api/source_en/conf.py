@@ -199,22 +199,19 @@ t.close()
 
 source_path = "../" + header_path + "/"
 source_runtime_include = os.path.join(source_path, "runtime/include")
-os.makedirs("../include/runtime")
-target_runtime_include = "../include/runtime"
-cpstr = "cp -rf " + source_runtime_include + " " + target_runtime_include
-os.system(cpstr)
+target_runtime_include = "../include/runtime/include"
+shutil.copytree(source_runtime_include, target_runtime_include)
 
 source_converter_include = os.path.join(source_path, "tools/converter/include")
-os.makedirs("../include/converter")
-target_converter_include = "../include/converter"
-cpstr2 = "cp -rf " + source_converter_include + " " + target_converter_include
-os.system(cpstr2)
+target_converter_include = "../include/converter/include"
+shutil.copytree(source_converter_include, target_converter_include)
 
 shutil.rmtree("../include/runtime/include/schema")
 shutil.rmtree("../include/runtime/include/third_party")
 shutil.rmtree("../include/converter/include/schema")
 shutil.rmtree("../include/converter/include/third_party")
 shutil.rmtree("../include/runtime/include/c_api")
+os.remove("../include/converter/include/api/types.h")
 
 # Remove "MS_API" in classes.
 files_copyed = glob.glob("../include/**/*.h", recursive=True)
