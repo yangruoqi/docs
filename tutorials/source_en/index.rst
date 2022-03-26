@@ -9,7 +9,7 @@ MindSpore Tutorial
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: For Beginners
+   :caption: Quick Start
 
    beginner/introduction
    beginner/quick_start
@@ -17,6 +17,6 @@ MindSpore Tutorial
    beginner/dataset
    beginner/model
    beginner/autograd
-   beginner/model_train
-   beginner/save_load_model
-   beginner/basic_process_deep_learning
+   beginner/train
+   beginner/save_load
+   beginner/infer
