@@ -3,14 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-应用实践
+应用案例
 =====================
 
 .. toctree::
    :glob:
    :maxdepth: 1
    :caption: 计算机视觉
-   :hidden:
 
    cv/cv_resnet50
    cv/transfer_learning
@@ -21,9 +20,22 @@
    :glob:
    :maxdepth: 1
    :caption: 自然语言处理
-   :hidden:
 
    nlp/sentiment_analysis
    nlp/sequence_labeling
+   
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 强化学习
+   
+   test
+   
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   :caption: 图学习
+   
+   test
    
    
