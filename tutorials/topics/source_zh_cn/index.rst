@@ -12,13 +12,10 @@
    
    mindarmour
    federated
-   reinforcement
+   xai
    mindscience
    mindquantum
-   xai
-   serving
    probability
-   graphlearning
    
    
    

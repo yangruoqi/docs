@@ -9,8 +9,7 @@
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: 数据引擎
-   :hidden:
+   :caption: 数据处理
 
    data_engine/introduction
    data_engine/eager
@@ -22,7 +21,6 @@
    :glob:
    :maxdepth: 1
    :caption: 算子执行
-   :hidden:
 
    operation/op_classification
    operation/op_overload
@@ -36,7 +34,6 @@
    :glob:
    :maxdepth: 1
    :caption: 编译优化
-   :hidden:
 
    compiler_optimization/enable_graph_kernel_fusion
    compiler_optimization/jit_fallback
@@ -45,7 +42,6 @@
    :glob:
    :maxdepth: 1
    :caption: 模型推理
-   :hidden:
 
    model_infer/inference
    model_infer/online_inference
@@ -54,8 +50,18 @@
 .. toctree::
    :glob:
    :maxdepth: 1
+   :caption: 调试调优
+
+   debug/read_ir_files
+   debug/debug_in_pynative_mode
+   debug/dump_in_graph_mode
+   debug/custom_debugging_info
+   debug/ms_class
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
    :caption: 分布式并行
-   :hidden:
 
    parallel/parallel_architecture
    parallel/parallel_strategy
@@ -68,20 +74,7 @@
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: 调试调优
-   :hidden:
-
-   debug/read_ir_files
-   debug/debug_in_pynative_mode
-   debug/dump_in_graph_mode
-   debug/custom_debugging_info
-   debug/ms_class
-
-.. toctree::
-   :glob:
-   :maxdepth: 1
-   :caption: 其他特性
-   :hidden:
+   :caption: 高级特性
 
    others/second_order_optimizer
    others/quantization_aware_training
