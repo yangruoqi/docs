@@ -3,12 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Deep Development
-=========================
+专题
+=====================
 
-.. toctree::
-   :glob:
-   :maxdepth: 1
-   :caption: Class
-
-   test/test1
+   mindarmour
+   federated
+   reinforcement
+   mindscience
+   mindquantum
+   xai
+   serving
+   probability
+   graphlearning
+   
+   
+   

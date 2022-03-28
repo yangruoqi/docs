@@ -3,13 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-MindSpore Tutorial
+Quick Start
 =========================
 
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: Quick Start
+   :caption: For Beginners
 
    beginner/introduction
    beginner/quick_start
