@@ -9,6 +9,5 @@ Topics
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: Class
 
    test/test1

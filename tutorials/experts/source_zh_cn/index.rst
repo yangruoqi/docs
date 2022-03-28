@@ -30,6 +30,7 @@
    operation/op_gpu
    operation/op_ascend
    operation/op_custom
+   operation/incremental_compilation
 
 .. toctree::
    :glob:
@@ -73,7 +74,6 @@
    debug/read_ir_files
    debug/debug_in_pynative_mode
    debug/dump_in_graph_mode
-   debug/incremental_operator_build
    debug/custom_debugging_info
    debug/ms_class
 
@@ -84,9 +84,9 @@
    :hidden:
 
    others/second_order_optimizer
-   others/apply_quantization_aware_training
-   others/enable_mixed_precision
-   others/apply_gradient_accumulation
+   others/quantization_aware_training
+   others/mixed_precision
+   others/gradient_accumulation
    others/apply_host_device_training
    others/numpy
    others/custom_operator

@@ -6,6 +6,10 @@
 专题
 =====================
 
+.. toctree::
+   :glob:
+   :maxdepth: 1
+   
    mindarmour
    federated
    reinforcement
