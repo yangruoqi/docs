@@ -19,6 +19,8 @@ MindSpore 文档
    design/heterogeneous_training
    design/mindir
    design/data_engine
+   design/graph_kernel_fusion_engine
+   design/jit_fallback
    可视化调试调优↗ <https://www.mindspore.cn/mindinsight/docs/zh-CN/master/training_visual_design.html>
    安全可信↗ <https://www.mindspore.cn/mindarmour/docs/zh-CN/master/design.html>
    design/glossary
@@ -32,8 +34,6 @@ MindSpore 文档
    note/network_list
    note/operator_list
    note/env_var_list
-   note/enable_graph_kernel_fusion
-   note/jit_fallback
    note/roadmap
    note/help_seeking_path
    note/community
