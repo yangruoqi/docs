@@ -31,8 +31,9 @@ MindSpore 文档
    note/benchmark
    note/network_list
    note/operator_list
-   note/index_support
    note/env_var_list
+   note/enable_graph_kernel_fusion
+   note/jit_fallback
    note/roadmap
    note/help_seeking_path
    note/community
@@ -66,7 +67,7 @@ MindSpore 文档
    api_python/mindspore.train
    api_python/mindspore.boost
    api_mapping
-   static_graph_syntax_support
+   syntax_list
 
 .. toctree::
    :glob:

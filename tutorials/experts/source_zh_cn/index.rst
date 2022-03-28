@@ -33,14 +33,6 @@
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: 编译优化
-
-   compiler_optimization/enable_graph_kernel_fusion
-   compiler_optimization/jit_fallback
-
-.. toctree::
-   :glob:
-   :maxdepth: 1
    :caption: 模型推理
 
    model_infer/inference

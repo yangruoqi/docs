@@ -29,13 +29,13 @@
    :maxdepth: 1
    :caption: 强化学习
    
-   test
+   rl/test1
    
 .. toctree::
    :glob:
    :maxdepth: 1
    :caption: 图学习
    
-   test
+   gnn/test2
    
    
