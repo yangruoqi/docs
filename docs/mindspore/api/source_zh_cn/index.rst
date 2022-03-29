@@ -28,20 +28,19 @@ MindSpore 文档
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: 扩展
+   :caption: 参考
 
    note/benchmark
    note/network_list
    note/operator_list
    note/env_var_list
-   note/roadmap
-   note/help_seeking_path
-   note/community
+   note/syntax_list
+   note/api_mapping
 
 .. toctree::
    :glob:
    :maxdepth: 1
-   :caption: MindSpore Python API
+   :caption: API
 
    api_python/mindspore
    api_python/mindspore.common.initializer
@@ -66,15 +65,7 @@ MindSpore 文档
    api_python/mindspore.scipy
    api_python/mindspore.train
    api_python/mindspore.boost
-   api_mapping
-   syntax_list
-
-.. toctree::
-   :glob:
-   :maxdepth: 1
-   :caption: MindSpore C++ API
-
-   MindSpore Lite↗ <https://www.mindspore.cn/lite/api/zh-CN/master/api_cpp/mindspore.html>
+   C++ API↗ <https://www.mindspore.cn/lite/api/zh-CN/master/api_cpp/mindspore.html>
 
 .. toctree::
    :glob:
