@@ -21,6 +21,7 @@ import itertools
 import platform
 import textwrap
 import spec
+import shutil
 
 from bs4 import BeautifulSoup
 
