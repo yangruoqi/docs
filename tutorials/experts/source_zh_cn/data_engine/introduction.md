@@ -2,7 +2,7 @@
 
 `Ascend` `GPU` `CPU` `设计` `数据准备`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/data_engine/data_engine.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/data_engine/introduction.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 ## 背景介绍
 
