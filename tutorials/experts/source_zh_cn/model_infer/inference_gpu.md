@@ -2,7 +2,7 @@
 
 `GPU` `推理应用`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/model_infer/source_zh_cn/inference_gpu.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/model_infer/inference_gpu.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 ## 使用C++接口推理MindIR格式文件
 

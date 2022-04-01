@@ -2,7 +2,7 @@
 
 `Ascend` `GPU` `分布式并行`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/parallel/source_zh_cn/distributed_training_ops.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/parallel/distributed_training_ops.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 在分布式训练中涉及例如`AllReduce`、`ReduceScatter`、`AllGather`和`Broadcast`等通信操作进行数据传输，我们将在下述的章节分别阐述其含义和示例代码。
 

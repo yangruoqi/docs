@@ -1,6 +1,6 @@
 # Quickstart: Handwritten Digit Recognition
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/source_en/beginner/basic_process_deep_learning.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source_en.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/source_en/beginner/quick_start.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source_en.png"></a>
 
 This section runs through the basic process of MindSpore deep learning, using the LeNet5 network model as an example to implement common tasks in deep learning.
 

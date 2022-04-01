@@ -2,7 +2,7 @@
 
 `Ascend` `GPU` `分布式并行` `模型导出` `模型加载`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/parallel/source_zh_cn/save_load_model_hybrid_parallel.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/parallel/save_load_model_hybrid_parallel.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 ## 概述
 

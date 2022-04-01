@@ -2,7 +2,7 @@
 
 `Ascend` `GPU` `CPU` `数据准备`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/data_engine/source_zh_cn/enable_dataset_offload.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/data_engine/enable_dataset_offload.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 ## 概述
 
