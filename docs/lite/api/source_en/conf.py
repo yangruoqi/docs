@@ -125,6 +125,7 @@ exhale_args = {
         EXTRACT_ALL = NO
         HIDE_UNDOC_CLASSES = YES
         HIDE_UNDOC_MEMBERS = YES
+        HIDE_UNDOC_RELATIONS = YES
         EXCLUDE_SYMBOLS = operator* GVAR*
     """),
     'contentsDirectives': False,
