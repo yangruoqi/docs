@@ -2,7 +2,7 @@
 
 `Ascend` `GPU` `并行训练` `自动并行`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/parallel/source_zh_cn/sharding_propagation.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source_en.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/parallel/sharding_propagation.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source_en.png"></a>
 
 ## 背景
 

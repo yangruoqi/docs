@@ -2,7 +2,7 @@
 
 `Ascend` `GPU` `数据处理` `性能调优`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/debug/source_zh_cn/dataset_autotune.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/debug/dataset_autotune.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 ## 概述
 

@@ -2,7 +2,7 @@
 
 `Ascend` `GPU` `分布式并行` `全流程`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/others/source_zh_cn/apply_host_device_training.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/others/apply_host_device_training.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 ## 概述
 

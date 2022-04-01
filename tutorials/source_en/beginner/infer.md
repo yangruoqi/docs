@@ -1,6 +1,6 @@
 # Inference and Deployment
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/source_en/beginner/inference and deployment.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/tutorials-develop/resource/_static/logo_source_en.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/source_en/beginner/infer.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/tutorials-develop/resource/_static/logo_source_en.png"></a>
 
 This chapter uses the `mobilenet_v2` network fine-tuning approach in MindSpore Vision to develop an AI application (classification of the dog and the croissants) and deploy the trained network model to the Android phone to perform inference and deployment functions.
 

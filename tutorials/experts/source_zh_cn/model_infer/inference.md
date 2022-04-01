@@ -2,7 +2,7 @@
 
 `Ascend` `GPU` `CPU` `推理应用`
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/model_infer/source_zh_cn/inference.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/model_infer/inference.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 MindSpore可以基于训练好的模型，在不同的硬件平台上执行推理任务。
 

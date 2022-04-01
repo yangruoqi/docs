@@ -1,6 +1,6 @@
 # 分布式训练通信原语
 
-<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/parallel/source_zh_cn/communication_primitive.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
+<a href="https://gitee.com/mindspore/docs/blob/tutorials-develop/tutorials/experts/source_zh_cn/parallel/communication_primitive.md" target="_blank"><img src="https://gitee.com/mindspore/docs/raw/master/resource/_static/logo_source.png"></a>
 
 当将神经网络的训练并行化到集群中不同的节点时，必须选择如何将不同的计算操作分配到集群中可用的节点，这就离不开对分布式集群的通信进行操作。
 
