@@ -6,4 +6,4 @@
   
   pynative_graph/mode
   pynative_graph/combine
-  pynative_graph/fallback
+  pynative_graph/pynative
