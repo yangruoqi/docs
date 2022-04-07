@@ -1,0 +1,18 @@
+分布式并行高级特性
+====================
+
+.. toctree::
+  :maxdepth: 1
+
+  distributed_advanced_overview
+  operator_parallel
+  pipeline_parallel
+  parallel_opt
+  host_device_training
+  recompute
+  sharding_propagation
+  parameter_server_training
+  comm_fusion
+  dataset_slice
+  distributed_inference
+  pynative_shard_function_parallel
