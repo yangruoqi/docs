@@ -214,6 +214,15 @@ shutil.rmtree("../include/converter/include/third_party")
 shutil.rmtree("../include/runtime/include/c_api")
 os.remove("../include/converter/include/api/types.h")
 
+process = os.popen('pip show mindspore|grep Location')
+output = process.read()
+process.close()
+mindspout = output.split(": ")[-1].strip()
+source_dataset_dir = mindspout + "/mindspore/include/dataset/"
+for file_ in os.listdir(source_dataset_dir):
+    target_dataset_dir = "../include/runtime/include/dataset/"
+    shutil.copy(source_dataset_dir+file_, target_dataset_dir)
+
 # Remove "MS_API" in classes.
 files_copyed = glob.glob("../include/**/*.h", recursive=True)
 for file in files_copyed:
