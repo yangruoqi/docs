@@ -11,9 +11,8 @@
    :maxdepth: 1
    :caption: 数据处理
 
-   data_engine/introduction
-   data_engine/eager
    data_engine/auto_augmentation
+   data_engine/eager
    data_engine/cache
    data_engine/optimize_data_processing
 
@@ -28,7 +27,6 @@
    operation/op_gpu
    operation/op_ascend
    operation/op_custom
-   operation/incremental_compilation
 
 .. toctree::
    :glob:
@@ -48,6 +46,9 @@
    debug/debug_in_pynative_mode
    debug/dump_in_graph_mode
    debug/custom_debugging_info
+   debug/incremental_compilation
+   debug/auto_tune
+   debug/dataset_autotune
    debug/ms_class
 
 .. toctree::
@@ -55,13 +56,9 @@
    :maxdepth: 1
    :caption: 分布式并行
 
-   parallel/parallel_architecture
-   parallel/parallel_strategy
-   parallel/apply_adaptive_summation
-   parallel/distributed_inference
-   parallel/communication_primitive
-   parallel/distributed_training_transformer
-   parallel/pangu_alpha
+   parallel/distributed_training
+   parallel/distributed_advanced
+   parallel/distributed_example
 
 .. toctree::
    :glob:
@@ -72,9 +69,5 @@
    others/quantization_aware_training
    others/mixed_precision
    others/gradient_accumulation
-   others/apply_host_device_training
-   others/numpy
-   others/custom_operator
-   others/lossscale
    
    
