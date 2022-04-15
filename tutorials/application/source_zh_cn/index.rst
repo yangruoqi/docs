@@ -11,7 +11,7 @@
    :maxdepth: 1
    :caption: 计算机视觉
 
-   cv/cv_resnet50
+   cv/resnet50
    cv/transfer_learning
    cv/fgsm
    cv/dcgan
