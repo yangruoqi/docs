@@ -38,7 +38,7 @@
 
    <div class="container">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./beginner/quick_start.html" class="article-link">
@@ -54,7 +54,7 @@
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./advance/linear_fitting.html" class="article-link">
@@ -70,7 +70,9 @@
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+         </div>
+         <div class="row">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./advance/dataset.html" class="article-link">
@@ -86,9 +88,7 @@
                   </div>
 					</div>
 				</div>
-			</div>
-         <div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./advance/network.html" class="article-link">
@@ -104,7 +104,9 @@
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+         </div>
+         <div class="row">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./advance/train.html" class="article-link">
@@ -120,7 +122,7 @@
                   </div>
 					</div>
 				</div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                <div class="doc-article-list">
                   <div class="doc-article-item">
                      <a href="./advance/pynative_graph.html" class="article-link">
@@ -136,6 +138,5 @@
                   </div>
 					</div>
 				</div>
-		</div>
+		   </div>
 	</div>
-		
