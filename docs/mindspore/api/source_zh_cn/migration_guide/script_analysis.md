@@ -46,7 +46,7 @@ MindSpore提供`GRAPH_MODE`和`PYNATIVE_MODE`两种模式。
 
 PyNative模式下模型进行**推理**的行为与一般Python代码无异。
 
-而在使用GRAPH_MODE时，或使用PYNATIVE_MODE进行**训练**时，通常会出现语法限制。在这两种情况下，需要对Python代码进行图编译操作，而这一步操作中MindSpore目前还未能支持完整的Python语法全集，所以`construct`函数的编写会存在部分限制。具体限制内容可以参考[MindSpore静态图语法](https://www.mindspore.cn/docs/note/zh-CN/master/static_graph_syntax_support.html)。
+而在使用GRAPH_MODE时，或使用PYNATIVE_MODE进行**训练**时，通常会出现语法限制。在这两种情况下，需要对Python代码进行图编译操作，而这一步操作中MindSpore目前还未能支持完整的Python语法全集，所以`construct`函数的编写会存在部分限制。具体限制内容可以参考[MindSpore静态图语法](https://www.mindspore.cn/docs/zh-CN/master/note/static_graph_syntax_support.html)。
 
 ### 常见限制原则
 
