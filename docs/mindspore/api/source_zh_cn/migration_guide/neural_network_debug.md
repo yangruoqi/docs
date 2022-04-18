@@ -57,7 +57,7 @@
 
 - 相同脚本，在PyNative模式下能跑通，但Graph模式下报错
 
-  MindSpore的Graph模式下，`construct`函数中的代码由MindSpore框架进行解析，有一些Python语法还未支持，因此导致报错。此时应当根据报错信息按照[MindSpore的语法说明](https://www.mindspore.cn/docs/note/zh-CN/master/static_graph_syntax_support.html)修改相关代码。
+  MindSpore的Graph模式下，`construct`函数中的代码由MindSpore框架进行解析，有一些Python语法还未支持，因此导致报错。此时应当根据报错信息按照[MindSpore的语法说明](https://www.mindspore.cn/docs/zh-CN/master/note/static_graph_syntax_support.html)修改相关代码。
 
 - 分布式并行训练脚本配置错误
 

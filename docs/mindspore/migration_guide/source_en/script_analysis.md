@@ -46,7 +46,7 @@ MindSpore provides two modes: `GRAPH_MODE` and `PYNATIVE_MODE`.
 
 In PyNative mode, the behavior of the model for **Evaluation** is same as that of in the general Python code.
 
-When using `GRAPH_MODE`, or when using `PYNATIVE_MODE` for **Training**, there are usually grammatical restrictions. In these two cases, it is necessary to perform graph compilation operations on the Python code. In this step, MindSpore has not yet been able to support the complete set of Python syntax, so there will be some restrictions on the implementation of the `construct` function. For specific restrictions, please refer to [MindSpore static graph syntax support](https://www.mindspore.cn/docs/note/en/master/static_graph_syntax_support.html).
+When using `GRAPH_MODE`, or when using `PYNATIVE_MODE` for **Training**, there are usually grammatical restrictions. In these two cases, it is necessary to perform graph compilation operations on the Python code. In this step, MindSpore has not yet been able to support the complete set of Python syntax, so there will be some restrictions on the implementation of the `construct` function. For specific restrictions, please refer to [MindSpore static graph syntax support](https://www.mindspore.cn/docs/en/master/note/static_graph_syntax_support.html).
 
 ### Common Restriction Principles
 

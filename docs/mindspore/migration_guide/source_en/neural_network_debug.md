@@ -59,7 +59,7 @@ During network process debugging, the common errors are as follows:
 
 - The same script works in PyNative mode, but reports bugs in Graph mode.
 
-  In MindSpore's Graph mode, the code in the `construct` function is parsed by the MindSpore framework, and there is some Python syntax that is not yet supported which results in errors. In this case, you should follow [MindSpore's Syntax Description](https://www.mindspore.cn/docs/note/en/master/static_graph_syntax_support.html) according to the error message.
+  In MindSpore's Graph mode, the code in the `construct` function is parsed by the MindSpore framework, and there is some Python syntax that is not yet supported which results in errors. In this case, you should follow [MindSpore's Syntax Description](https://www.mindspore.cn/docs/en/master/note/static_graph_syntax_support.html) according to the error message.
 
 - Distributed parallel training script is misconfigured.
 
